@@ -1,0 +1,297 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrainCoins - Play to Earn Trivia</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #050510;
+  min-height: 100vh;
+  font-family: 'Rajdhani', sans-serif;
+  color: white;
+  overflow-x: hidden;
+}
+.grid-bg {
+  position: fixed; inset: 0;
+  background-image: linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
+}
+.orb { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; opacity: 0.12; }
+.orb1 { width: 400px; height: 400px; background: #7c3aed; top: -100px; left: -100px; }
+.orb2 { width: 300px; height: 300px; background: #0891b2; bottom: -50px; right: -50px; }
+.container { max-width: 480px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+.header { display: flex; justify-content: space-between; align-items: center; padding: 16px 0 24px; }
+.logo { font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 900; background: linear-gradient(90deg, #00f5ff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; }
+.wallet { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 8px 16px; font-family: 'Orbitron', monospace; font-size: 14px; color: #ffd700; }
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+.stat-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; text-align: center; }
+.stat-value { font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 700; color: #00f5ff; }
+.stat-label { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+.hero { text-align: center; padding: 20px 0 32px; }
+.hero-icon { font-size: 72px; display: block; margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+.hero-title { font-family: 'Orbitron', monospace; font-size: 26px; font-weight: 900; background: linear-gradient(135deg, #fff 0%, #a855f7 50%, #00f5ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; line-height: 1.2; }
+.hero-sub { color: rgba(255,255,255,0.5); font-size: 15px; margin-bottom: 32px; }
+.section-title { font-family: 'Orbitron', monospace; font-size: 11px; letter-spacing: 3px; color: rgba(255,255,255,0.3); text-transform: uppercase; margin-bottom: 12px; }
+.cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+.cat-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px 8px; text-align: center; cursor: pointer; transition: all 0.2s; color: white; }
+.cat-btn:hover, .cat-btn.selected { background: rgba(168,85,247,0.2); border-color: #a855f7; transform: translateY(-2px); box-shadow: 0 4px 20px rgba(168,85,247,0.3); }
+.cat-emoji { font-size: 24px; display: block; margin-bottom: 6px; }
+.cat-name { font-size: 12px; font-weight: 600; }
+.diff-row { display: flex; gap: 10px; margin-bottom: 28px; }
+.diff-btn { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); cursor: pointer; text-align: center; transition: all 0.2s; color: white; font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 14px; }
+.diff-btn.easy.selected { background: rgba(74,222,128,0.2); border-color: #4ade80; color: #4ade80; }
+.diff-btn.medium.selected { background: rgba(250,204,21,0.2); border-color: #facc15; color: #facc15; }
+.diff-btn.hard.selected { background: rgba(248,113,113,0.2); border-color: #f87171; color: #f87171; }
+.diff-reward { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+.start-btn { width: 100%; padding: 18px; border-radius: 16px; border: none; background: linear-gradient(135deg, #7c3aed, #0891b2); color: white; font-family: 'Orbitron', monospace; font-size: 16px; font-weight: 700; letter-spacing: 2px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 30px rgba(124,58,237,0.4); }
+.start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(124,58,237,0.6); }
+.start-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* API KEY SETUP */
+.setup-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(168,85,247,0.3); border-radius: 20px; padding: 24px; margin-bottom: 20px; }
+.setup-title { font-family: 'Orbitron', monospace; font-size: 14px; color: #a855f7; margin-bottom: 8px; }
+.setup-sub { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 16px; line-height: 1.5; }
+.api-input { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid rgba(168,85,247,0.3); background: rgba(0,0,0,0.3); color: white; font-family: 'Rajdhani', sans-serif; font-size: 14px; margin-bottom: 10px; }
+.api-input:focus { outline: none; border-color: #a855f7; }
+.save-key-btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: rgba(168,85,247,0.3); color: #a855f7; font-family: 'Orbitron', monospace; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.save-key-btn:hover { background: rgba(168,85,247,0.5); }
+.key-saved { color: #4ade80; font-size: 12px; text-align: center; margin-top: 8px; font-weight: 600; }
+
+/* QUIZ */
+.q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.q-badge { font-family: 'Orbitron', monospace; font-size: 12px; color: rgba(255,255,255,0.4); }
+.diff-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid; }
+.timer-wrap { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
+.timer-bar { height: 100%; border-radius: 2px; transition: width 1s linear, background 0.5s; }
+.q-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 28px 24px; margin-bottom: 20px; min-height: 120px; display: flex; align-items: center; justify-content: center; }
+.q-text { font-size: 19px; font-weight: 600; text-align: center; line-height: 1.5; }
+.options { display: grid; gap: 10px; margin-bottom: 20px; }
+.opt-btn { padding: 16px 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: white; font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 500; cursor: pointer; text-align: left; transition: all 0.2s; display: flex; align-items: center; gap: 12px; width: 100%; }
+.opt-btn:hover:not(:disabled) { background: rgba(168,85,247,0.15); border-color: rgba(168,85,247,0.4); transform: translateX(4px); }
+.opt-btn.correct { background: rgba(74,222,128,0.2) !important; border-color: #4ade80 !important; color: #4ade80; }
+.opt-btn.wrong { background: rgba(248,113,113,0.2) !important; border-color: #f87171 !important; color: #f87171; }
+.opt-btn.reveal { background: rgba(74,222,128,0.1) !important; border-color: rgba(74,222,128,0.4) !important; color: #4ade80; }
+.opt-letter { width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', monospace; font-size: 12px; flex-shrink: 0; }
+.loading-wrap { text-align: center; padding: 60px 0; }
+.spinner { width: 48px; height: 48px; border: 3px solid rgba(168,85,247,0.2); border-top-color: #a855f7; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 20px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-family: 'Orbitron', monospace; font-size: 13px; color: rgba(255,255,255,0.4); letter-spacing: 2px; }
+.toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); padding: 14px 28px; border-radius: 50px; font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 700; z-index: 100; white-space: nowrap; animation: toastIn 0.3s ease; }
+.toast.correct { background: linear-gradient(135deg,#065f46,#047857); border: 1px solid #4ade80; color: #4ade80; box-shadow: 0 4px 30px rgba(74,222,128,0.3); }
+.toast.wrong { background: linear-gradient(135deg,#7f1d1d,#991b1b); border: 1px solid #f87171; color: #f87171; }
+@keyframes toastIn { from{opacity:0;transform:translateX(-50%) translateY(-10px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+
+/* RESULTS */
+.results-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 32px 24px; text-align: center; margin-bottom: 20px; }
+.result-emoji { font-size: 64px; display: block; margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
+.result-title { font-family: 'Orbitron', monospace; font-size: 22px; font-weight: 900; margin-bottom: 8px; background: linear-gradient(90deg,#ffd700,#ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.result-sub { color: rgba(255,255,255,0.5); font-size: 15px; margin-bottom: 28px; }
+.earned-banner { background: linear-gradient(135deg,rgba(255,215,0,0.1),rgba(255,140,0,0.1)); border: 1px solid rgba(255,215,0,0.3); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+.earned-label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+.earned-amount { font-family: 'Orbitron', monospace; font-size: 40px; font-weight: 900; color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
+.score-breakdown { display: flex; justify-content: center; gap: 24px; color: rgba(255,255,255,0.6); font-size: 15px; margin-bottom: 24px; }
+.score-breakdown span { color: white; font-weight: 700; }
+.btn-primary { width: 100%; padding: 16px; border-radius: 14px; border: none; background: linear-gradient(135deg,#7c3aed,#0891b2); color: white; font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 700; letter-spacing: 1px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 20px rgba(124,58,237,0.3); margin-bottom: 10px; }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.7); font-family: 'Orbitron', monospace; font-size: 13px; font-weight: 600; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; }
+.streak-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(251,146,60,0.15); border: 1px solid rgba(251,146,60,0.4); border-radius: 20px; padding: 6px 16px; font-size: 13px; color: #fb923c; font-weight: 600; margin-bottom: 16px; }
+.hidden { display: none; }
+
+/* AD PLACEHOLDER */
+.ad-placeholder { background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; text-align: center; color: rgba(255,255,255,0.2); font-size: 12px; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<div id="toast" class="toast hidden"></div>
+
+<div class="container">
+  <header class="header">
+    <div class="logo">BRAIN🪙COINS</div>
+    <div class="wallet">🪙 <span id="coinDisplay">0</span></div>
+  </header>
+
+  <!-- HOME SCREEN -->
+  <div id="homeScreen">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-value" id="statGames">0</div><div class="stat-label">Games</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:#fb923c" id="statStreak">0</div><div class="stat-label">Streak</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:#ffd700" id="statCoins">0</div><div class="stat-label">Coins</div></div>
+    </div>
+
+    <!-- API KEY SETUP -->
+    <div class="setup-card" id="apiSetup">
+      <div class="setup-title">🔑 SETUP REQUIRED</div>
+      <div class="setup-sub">Enter your free Groq API key to start generating questions. Get one free at console.groq.com</div>
+      <input type="password" class="api-input" id="apiKeyInput" placeholder="Paste your gsk_... key here">
+      <button class="save-key-btn" onclick="saveApiKey()">SAVE & ACTIVATE</button>
+      <div id="keySavedMsg" class="key-saved hidden">✓ Key saved! You can now play.</div>
+    </div>
+
+    <div class="hero">
+      <span class="hero-icon">🧠</span>
+      <h1 class="hero-title">ANSWER TO<br>EARN COINS</h1>
+      <p class="hero-sub">AI-powered · New questions every time</p>
+    </div>
+
+    <p class="section-title">Choose Category</p>
+    <div class="cat-grid">
+      <button class="cat-btn" onclick="selectCat(this,'Science')"><span class="cat-emoji">🔬</span><span class="cat-name">Science</span></button>
+      <button class="cat-btn" onclick="selectCat(this,'History')"><span class="cat-emoji">📜</span><span class="cat-name">History</span></button>
+      <button class="cat-btn" onclick="selectCat(this,'Pop Culture')"><span class="cat-emoji">🎬</span><span class="cat-name">Pop Culture</span></button>
+      <button class="cat-btn" onclick="selectCat(this,'Geography')"><span class="cat-emoji">🌍</span><span class="cat-name">Geography</span></button>
+      <button class="cat-btn" onclick="selectCat(this,'Sports')"><span class="cat-emoji">⚽</span><span class="cat-name">Sports</span></button>
+      <button class="cat-btn" onclick="selectCat(this,'Technology')"><span class="cat-emoji">💻</span><span class="cat-name">Technology</span></button>
+    </div>
+
+    <p class="section-title">Select Difficulty</p>
+    <div class="diff-row">
+      <button class="diff-btn easy" onclick="selectDiff(this,'easy')">EASY<div class="diff-reward" style="color:#4ade80">+10🪙</div></button>
+      <button class="diff-btn medium" onclick="selectDiff(this,'medium')">MEDIUM<div class="diff-reward" style="color:#facc15">+25🪙</div></button>
+      <button class="diff-btn hard" onclick="selectDiff(this,'hard')">HARD<div class="diff-reward" style="color:#f87171">+50🪙</div></button>
+    </div>
+
+    <div class="ad-placeholder">📢 Ad space — Connect Google AdSense to monetize here</div>
+
+    <button class="start-btn" id="startBtn" onclick="startGame()" disabled>SELECT ABOVE TO START</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quizScreen" class="hidden">
+    <div class="q-meta">
+      <span class="q-badge" id="qNum">Q 1 / 5</span>
+      <span class="diff-badge" id="diffBadge"></span>
+      <span class="q-badge" id="timerText" style="font-weight:700">20s</span>
+    </div>
+    <div class="timer-wrap"><div class="timer-bar" id="timerBar" style="width:100%;background:#00f5ff"></div></div>
+    <div id="loadingWrap" class="loading-wrap">
+      <div class="spinner"></div>
+      <p class="loading-text">GENERATING QUESTION...</p>
+    </div>
+    <div id="questionWrap" class="hidden">
+      <div class="q-card"><p class="q-text" id="questionText"></p></div>
+      <div class="options" id="optionsContainer"></div>
+      <div id="streakBadge" class="streak-badge hidden">🔥 <span id="streakCount">0</span> streak — +50% bonus!</div>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="resultsScreen" class="hidden">
+    <div class="results-card">
+      <span class="result-emoji" id="resultEmoji">🏆</span>
+      <h2 class="result-title" id="resultTitle">PERFECT SCORE!</h2>
+      <p class="result-sub" id="resultSub"></p>
+      <div class="earned-banner">
+        <p class="earned-label">Coins Earned This Round</p>
+        <p class="earned-amount">🪙 <span id="earnedAmount">0</span></p>
+      </div>
+      <div class="score-breakdown">
+        <div>Correct <span id="finalScore">0/5</span></div>
+        <div>Total <span id="finalCoins">0</span>🪙</div>
+        <div>Streak <span id="finalStreak">0</span>🔥</div>
+      </div>
+    </div>
+    <div class="ad-placeholder">📢 Ad space — Connect Google AdSense to monetize here</div>
+    <button class="btn-primary" onclick="playAgain()">PLAY AGAIN</button>
+    <button class="btn-secondary" onclick="goHome()">CHANGE SETTINGS</button>
+  </div>
+</div>
+
+<script>
+let coins = parseInt(localStorage.getItem('bc_coins') || '0');
+let totalGames = parseInt(localStorage.getItem('bc_games') || '0');
+let streak = 0;
+let category = null;
+let difficulty = null;
+let currentQ = 0;
+let score = 0;
+let sessionEarned = 0;
+let question = null;
+let answered = false;
+let timer = 20;
+let timerInterval = null;
+const TOTAL_Q = 5;
+const REWARDS = { easy: 10, medium: 25, hard: 50 };
+
+function updateDisplay() {
+  document.getElementById('coinDisplay').textContent = coins.toLocaleString();
+  document.getElementById('statGames').textContent = totalGames;
+  document.getElementById('statStreak').textContent = streak;
+  document.getElementById('statCoins').textContent = coins.toLocaleString();
+}
+
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key.startsWith('gsk_')) { alert('Please enter a valid Groq key starting with gsk_'); return; }
+  localStorage.setItem('bc_groq_key', key);
+  document.getElementById('keySavedMsg').classList.remove('hidden');
+  document.getElementById('apiSetup').style.borderColor = 'rgba(74,222,128,0.4)';
+  setTimeout(() => document.getElementById('apiSetup').classList.add('hidden'), 2000);
+}
+
+function checkApiKey() {
+  const key = localStorage.getItem('bc_groq_key');
+  if (key) document.getElementById('apiSetup').classList.add('hidden');
+}
+
+function selectCat(btn, cat) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  category = cat;
+  checkStart();
+}
+
+function selectDiff(btn, diff) {
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  difficulty = diff;
+  checkStart();
+}
+
+function checkStart() {
+  const btn = document.getElementById('startBtn');
+  if (category && difficulty) {
+    btn.disabled = false;
+    btn.textContent = 'START GAME →';
+  }
+}
+
+async function fetchQuestion() {
+  const key = localStorage.getItem('bc_groq_key');
+  if (!key) { alert('Please save your Groq API key first!'); return null; }
+  const prompt = `Generate a ${difficulty} trivia question about ${category}. Return ONLY valid JSON with no markdown: {"question":"...","options":["A","B","C","D"],"correct":0,"explanation":"..."}. The correct field is the 0-based index of the right answer.`;
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+      body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages: [{ role: 'user', content: prompt }], max_tokens: 500, temperature: 0.7 })
+    });
+    const data = await res.json();
+    const text = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+    return JSON.parse(text);
+  } catch(e) { console.error(e); return null; }
+}
+
+async function startGame() {
+  score = 0; sessionEarned = 0; currentQ = 0; streak = 0;
+  document.getElementById('homeScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  await loadQuestion();
+}
+
+async function loadQuestion() {
+  answered = false;
+  clearInterval(timerInterval);
+  document.getElementById('loadingWrap').classList.remove('hidden');
+  document.getElementById('questionWrap').classList.add('hidden');
+  document.getElementById('qNum').textContent = `Q ${currentQ + 1} / ${TOTAL_Q}`;
+  const diff = difficulty;
+  const badge = document.getElementById('diff
