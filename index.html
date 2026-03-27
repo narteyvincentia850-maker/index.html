@@ -3,221 +3,179 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BrainCoins Pro</title>
+<title>BrainCoins Simple</title>
 <style>
-/* STYLE UPDATES */
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a1a;color:#fff;font-family:sans-serif;padding:16px;min-height:100vh;display:flex;flex-direction:column;align-items:center}
-#app-container{width:100%;max-width:500px}
-h1{text-align:center;color:#00f5ff;font-size:24px;letter-spacing:2px;margin-bottom:4px}
-.sub{text-align:center;color:#888;font-size:12px;margin-bottom:12px}
+body{background:#0a0a1a;color:#fff;font-family:sans-serif;padding:15px;text-align:center}
+#app{max-width:400px;margin:0 auto}
+h1{color:#00f5ff;margin-bottom:10px;font-size:22px}
 
-.stats-bar{display:flex;justify-content:center;gap:15px;margin-bottom:15px}
-.stat-box{background:rgba(255,255,255,0.05);padding:6px 15px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);font-weight:bold;font-size:14px}
-.stat-coins{color:gold}
-.stat-gems{color:#00f5ff}
+.wallet-bar{display:flex;justify-content:center;gap:15px;margin-bottom:15px}
+.coin-box{background:#1a1a2e;padding:5px 15px;border-radius:15px;border:1px solid gold;color:gold;font-weight:bold}
 
-/* DAILY GIFT BUTTON */
-#dailyGiftBtn{background:linear-gradient(45deg, #ff00cc, #3333ff); color:white; font-size:12px; padding:10px; border-radius:10px; margin-bottom:15px; border:none; width:100%; display:none; animation: pulse 2s infinite}
-@keyframes pulse { 0% {transform:scale(1)} 50% {transform:scale(1.02)} 100% {transform:scale(1)} }
+.card{background:rgba(255,255,255,0.05);padding:15px;border-radius:15px;margin-bottom:15px;border:1px solid #333}
 
-.ad-space{width:100%;min-height:80px;margin:10px 0;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;color:#333;font-size:10px;border-radius:8px}
+/* BUTTONS */
+button{width:100%;padding:12px;border-radius:10px;border:none;font-weight:bold;cursor:pointer;margin-bottom:8px}
+.btn-play{background:linear-gradient(to right, #7c3aed, #0891b2);color:#fff}
+.btn-gift{background:#ff00cc;color:white;font-size:12px;display:none}
 
-.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(10px);border-radius:16px;padding:20px;margin-bottom:16px;width:100%}
-.card h3{color:#a855f7;font-size:11px;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+/* SELECTIONS */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:15px}
+.item{padding:10px 2px;background:#111;border:1px solid #333;border-radius:8px;font-size:10px;cursor:pointer}
+.item.on{border-color:#00f5ff;background:#003344;color:#00f5ff}
 
-button{width:100%;padding:14px;border-radius:10px;border:none;font-size:15px;font-weight:bold;cursor:pointer;margin-bottom:8px;transition:0.2s}
-.btn-main{background:linear-gradient(135deg,#7c3aed,#0891b2);color:#fff}
-.btn-main:disabled{background:#333;color:#666}
-.btn-shop{background:#facc15;color:#000;margin-top:10px}
+/* QUIZ */
+.opt{background:#1a1a2e;color:#fff;text-align:left;border:1px solid #333;padding:12px;margin-bottom:8px;width:100%;border-radius:8px}
+.opt.correct{background:#052e16;border-color:#4ade80;color:#4ade80}
+.opt.wrong{background:#2d0a0a;border-color:#f87171;color:#f87171}
 
-.cats, .diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-.cat, .diff{padding:12px 4px;border-radius:10px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:center;font-size:11px}
-.cat.on{border-color:#a855f7;background:#2d1b69;color:#a855f7}
-.diff.on{border-color:#facc15;color:#facc15;background:#1a1500}
-
-.powerups{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}
-.pw-btn{padding:10px;font-size:12px;background:#1a1a2e;border:1px solid #444;color:white;border-radius:8px}
-
-.opt{width:100%;padding:14px;border-radius:10px;border:1px solid #333;background:rgba(255,255,255,0.05);color:#fff;text-align:left;font-size:15px;margin-bottom:8px}
-.opt.correct{border-color:#4ade80;background:#052e16;color:#4ade80}
-.opt.wrong{border-color:#f87171;background:#2d0a0a;color:#f87171}
-.opt.show{border-color:#4ade80;background:#052e16}
-.opt.hidden-opt{opacity:0.1;pointer-events:none}
-
-.timer{height:6px;background:#333;border-radius:10px;margin-bottom:16px;overflow:hidden}
-.timer-bar{height:100%;background:#00f5ff;transition:width 1s linear}
-.frozen{background:white;box-shadow:0 0 10px white}
-
-#shop{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:100}
-.shop-content{width:90%;max-width:350px;background:#111;padding:25px;border-radius:20px;border:1px solid #a855f7}
-.shop-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #222}
+.timer-bg{width:100%;height:6px;background:#222;border-radius:10px;margin-bottom:10px;overflow:hidden}
+.timer-fill{height:100%;background:#00f5ff;width:100%;transition:width 1s linear}
 
 .hidden{display:none}
 </style>
 </head>
 <body>
 
-<div id="app-container">
-    <h1>🧠 BRAINCOINS</h1>
-    <p class="sub">Level Up Your Mind</p>
+<div id="app">
+    <h1>BRAINCOINS</h1>
     
-    <div class="stats-bar">
-        <div class="stat-box stat-coins">🪙 <span id="coins">0</span></div>
-        <div class="stat-box stat-gems">💎 <span id="gems">0</span></div>
+    <div class="wallet-bar">
+        <div class="coin-box">🪙 <span id="c-val">0</span></div>
+        <div class="coin-box" style="border-color:#00f5ff; color:#00f5ff">💎 <span id="g-val">0</span></div>
     </div>
 
-    <button id="dailyGiftBtn" onclick="claimDaily()">🎁 CLAIM DAILY REWARD (+50 🪙)</button>
+    <button id="giftBtn" class="btn-gift" onclick="claim()">🎁 CLAIM DAILY 50 COINS</button>
 
     <div id="home">
-      <div class="card">
-        <h3>1. TOPIC</h3>
-        <div class="cats">
-          <div class="cat" onclick="pick(this,'Science')">🔬 Science</div>
-          <div class="cat" onclick="pick(this,'History')">📜 History</div>
-          <div class="cat" onclick="pick(this,'Pop Culture')">🎬 Pop</div>
-          <div class="cat" onclick="pick(this,'Geography')">🌍 Geo</div>
-          <div class="cat" onclick="pick(this,'Sports')">⚽ Sports</div>
-          <div class="cat" onclick="pick(this,'Technology')">💻 Tech</div>
+        <div class="card">
+            <p style="font-size:12px;color:#888;margin-bottom:10px">CHOOSE TOPIC</p>
+            <div class="grid">
+                <div class="item" onclick="setCat(this,17)">Science</div>
+                <div class="item" onclick="setCat(this,23)">History</div>
+                <div class="item" onclick="setCat(this,11)">Pop</div>
+                <div class="item" onclick="setCat(this,22)">Geography</div>
+                <div class="item" onclick="setCat(this,21)">Sports</div>
+                <div class="item" onclick="setCat(this,18)">Tech</div>
+            </div>
+            <p style="font-size:12px;color:#888;margin-bottom:10px">DIFFICULTY</p>
+            <div class="grid">
+                <div class="item" onclick="setDiff(this,'easy')">EASY</div>
+                <div class="item" onclick="setDiff(this,'medium')">MED</div>
+                <div class="item" onclick="setDiff(this,'hard')">HARD</div>
+            </div>
+            <button class="btn-play" id="sBtn" onclick="startGame()" disabled>START GAME</button>
         </div>
-        <h3>2. DIFFICULTY</h3>
-        <div class="diffs">
-          <div class="diff" onclick="pickD(this,'easy')">EASY</div>
-          <div class="diff" onclick="pickD(this,'medium')">MED</div>
-          <div class="diff" onclick="pickD(this,'hard')">HARD</div>
-        </div>
-        <button class="btn-main" id="startBtn" onclick="start()" disabled>START MISSION</button>
-        <button class="btn-shop" onclick="toggleShop(true)">🛒 OPEN SHOP / CHESTS</button>
-      </div>
     </div>
 
     <div id="quiz" class="hidden">
-      <div class="powerups">
-        <button class="pw-btn" id="pw-50" onclick="use5050()">✂️ 50/50 (<span id="count-50">0</span>)</button>
-        <button class="pw-btn" id="pw-freeze" onclick="useFreeze()">❄️ FREEZE (<span id="count-freeze">0</span>)</button>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-        <span id="qnum" style="color:#888;font-size:12px">Q1/5</span>
-        <span id="tsec" style="color:#00f5ff;font-size:13px;font-weight:bold">20s</span>
-      </div>
-      <div class="timer"><div class="timer-bar" id="tbar" style="width:100%"></div></div>
-      <div id="qwrap">
-        <div class="card"><p id="qtxt" style="font-size:17px;line-height:1.5"></p></div>
+        <div class="timer-bg"><div class="timer-fill" id="t-fill"></div></div>
+        <div class="card"><p id="q-txt" style="font-size:16px"></p></div>
         <div id="opts"></div>
-      </div>
     </div>
 
     <div id="results" class="hidden">
-      <div class="card" style="text-align:center">
-        <div style="font-size:50px;margin-bottom:10px" id="remoji">🏆</div>
-        <h2 id="rtitle" style="color:gold">GREAT!</h2>
-        <p id="rsub" style="color:#888;margin-bottom:15px"></p>
-        <div style="font-size:12px;color:#888">EARNED</div>
-        <div style="font-size:32px;font-weight:bold;color:gold;margin-bottom:10px">🪙 <span id="rearned">0</span></div>
-        <div id="gem-reward" style="color:#00f5ff;font-weight:bold" class="hidden">+1 💎 PERFECT BONUS!</div>
-      </div>
-      <button class="btn-main" onclick="start()">PLAY AGAIN</button>
-      <button class="btn-shop" onclick="shareScore()" style="background:#25d366; color:white">SHARE SCORE 🚀</button>
-      <button class="btn-shop" style="background:#1a1a2e; color:#888" onclick="goHome()">HOME</button>
-    </div>
-
-    <div class="ad-space">ADVERTISEMENT</div>
-</div>
-
-<div id="shop" class="hidden">
-    <div class="shop-content">
-        <h2 style="text-align:center;color:gold;margin-bottom:15px">GAME SHOP</h2>
-        <div class="shop-item"><div><strong>✂️ 50/50</strong><br><small style="color:#666">Cost: 100 🪙</small></div><button onclick="buy('50')" class="btn-main" style="width:80px;padding:8px">BUY</button></div>
-        <div class="shop-item"><div><strong>❄️ FREEZE</strong><br><small style="color:#666">Cost: 150 🪙</small></div><button onclick="buy('freeze')" class="btn-main" style="width:80px;padding:8px">BUY</button></div>
-        <div class="shop-item" style="border:1px solid #00f5ff; padding:10px; border-radius:10px; margin-top:10px">
-            <div><strong>🎁 MYSTERY CHEST</strong><br><small style="color:#00f5ff">Win 100-500 🪙!</small></div><button onclick="openChest()" class="btn-main" style="width:80px;padding:8px;background:linear-gradient(to right, #00f5ff, #0055ff)">1 💎</button>
+        <div class="card">
+            <h2 id="res-title">DONE!</h2>
+            <p id="res-sub"></p>
+            <h1 style="font-size:40px;margin:10px 0">🪙 <span id="res-coins">0</span></h1>
+            <p id="gem-msg" style="color:#00f5ff;font-weight:bold" class="hidden">💎 +1 GEM AWARDED!</p>
         </div>
-        <button class="btn-shop" style="margin-top:20px" onclick="toggleShop(false)">CLOSE</button>
+        <button class="btn-play" onclick="startGame()">PLAY AGAIN</button>
+        <button onclick="location.reload()" style="background:#333;color:#fff">BACK TO HOME</button>
     </div>
 </div>
 
 <script>
-var coins = +localStorage.getItem('bc_coins')||0, gems = +localStorage.getItem('bc_gems')||0, p50 = +localStorage.getItem('bc_p50')||0, pFreeze = +localStorage.getItem('bc_pfreeze')||0;
-var streak=0, cat=null, diff=null, curQ=0, score=0, earned=0, q=null, done=false, timer=20, tint=null, isFrozen=false;
-const catMap={'Science':17,'History':23,'Pop Culture':11,'Geography':22,'Sports':21,'Technology':18};
+let coins = +localStorage.getItem('bc_c')||0, gems = +localStorage.getItem('bc_g')||0;
+let selCat = null, selDiff = null, curQ = 0, score = 0, earned = 0, qData = null, isDone = false, timer = 20, timerInt = null;
 
-function decodeHTML(h){var t=document.createElement("textarea");t.innerHTML=h;return t.value;}
-function upd(){
-    document.getElementById('coins').textContent=coins.toLocaleString();
-    document.getElementById('gems').textContent=gems;
-    document.getElementById('count-50').textContent=p50;
-    document.getElementById('count-freeze').textContent=pFreeze;
-    checkDaily();
+function upd() {
+    document.getElementById('c-val').textContent = coins;
+    document.getElementById('g-val').textContent = gems;
+    const last = localStorage.getItem('bc_last');
+    if(!last || new Date().getTime() - last > 86400000) document.getElementById('giftBtn').style.display='block';
+    else document.getElementById('giftBtn').style.display='none';
 }
 
-function checkDaily(){
-    const last = localStorage.getItem('bc_last_daily');
-    const now = new Date().getTime();
-    if(!last || now - last > 86400000) document.getElementById('dailyGiftBtn').style.display = 'block';
-    else document.getElementById('dailyGiftBtn').style.display = 'none';
+function claim(){ coins+=50; localStorage.setItem('bc_last', new Date().getTime()); save(); upd(); }
+function save(){ localStorage.setItem('bc_c', coins); localStorage.setItem('bc_g', gems); }
+
+function setCat(el,id){ document.querySelectorAll('.item').forEach(i=>i.classList.remove('on')); el.classList.add('on'); selCat=id; check(); }
+function setDiff(el,d){ el.parentElement.querySelectorAll('.item').forEach(i=>i.classList.remove('on')); el.classList.add('on'); selDiff=d; check(); }
+function check(){ if(selCat && selDiff){ let b=document.getElementById('sBtn'); b.disabled=false; b.style.opacity=1; } }
+
+async function startGame(){
+    score=0; earned=0; curQ=0; 
+    document.getElementById('home').classList.add('hidden');
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('quiz').classList.remove('hidden');
+    await nextQ();
 }
 
-function claimDaily(){
-    coins += 50;
-    localStorage.setItem('bc_last_daily', new Date().getTime());
-    alert("🎁 You received 50 Coins! Come back tomorrow for more.");
+async function nextQ(){
+    isDone = false; clearInterval(timerInt);
+    document.getElementById('opts').innerHTML = "<p style='color:#666'>Loading...</p>";
+    try {
+        const r = await fetch(`https://opentdb.com/api.php?amount=1&category=${selCat}&difficulty=${selDiff}&type=multiple`);
+        const d = await r.json();
+        const res = d.results[0];
+        const options = [...res.incorrect_answers];
+        const corIdx = Math.floor(Math.random()*4);
+        options.splice(corIdx, 0, res.correct_answer);
+        qData = { q: res.question, options: options, correct: corIdx };
+        
+        document.getElementById('q-txt').innerHTML = qData.q;
+        document.getElementById('opts').innerHTML = "";
+        qData.options.forEach((o, i) => {
+            let b = document.createElement('button');
+            b.className = 'opt';
+            b.innerHTML = o;
+            b.onclick = () => answer(i, b);
+            document.getElementById('opts').appendChild(b);
+        });
+        startT();
+    } catch(e) { alert("Error loading question."); location.reload(); }
+}
+
+function startT(){
+    timer = 20;
+    timerInt = setInterval(()=>{
+        timer--;
+        document.getElementById('t-fill').style.width = (timer/20)*100 + "%";
+        if(timer <= 0){ clearInterval(timerInt); answer(-1, null); }
+    }, 1000);
+}
+
+function answer(idx, btn){
+    if(isDone) return; isDone = true; clearInterval(timerInt);
+    const btns = document.querySelectorAll('.opt');
+    if(idx === qData.correct){
+        btn.classList.add('correct');
+        let win = {easy:10,medium:20,hard:30}[selDiff];
+        score++; earned += win; coins += win;
+    } else {
+        if(btn) btn.classList.add('wrong');
+        btns[qData.correct].classList.add('correct');
+    }
+    save(); upd();
+    setTimeout(()=>{
+        curQ++;
+        if(curQ < 5) nextQ();
+        else finish();
+    }, 1500);
+}
+
+function finish(){
+    document.getElementById('quiz').classList.add('hidden');
+    document.getElementById('results').classList.remove('hidden');
+    document.getElementById('res-coins').textContent = earned;
+    if(score === 5){ gems++; document.getElementById('gem-msg').classList.remove('hidden'); }
+    else document.getElementById('gem-msg').classList.add('hidden');
     save(); upd();
 }
 
-function pick(el,c){document.querySelectorAll('.cat').forEach(b=>b.classList.remove('on'));el.classList.add('on');cat=c;chk();}
-function pickD(el,d){document.querySelectorAll('.diff').forEach(b=>b.classList.remove('on'));el.classList.add('on');diff=d;chk();}
-function chk(){var b=document.getElementById('startBtn');if(cat&&diff){b.disabled=false;b.textContent='START MISSION →';}}
-function toggleShop(s){document.getElementById('shop').classList[s?'remove':'add']('hidden');}
-function buy(item){
-    if(item==='50' && coins>=100){ coins-=100; p50++; }
-    else if(item==='freeze' && coins>=150){ coins-=150; pFreeze++; }
-    else { alert("Not enough coins!"); return; }
-    save(); upd();
-}
-function openChest(){
-    if(gems>=1){ gems-=1; const win=Math.floor(Math.random()*401)+100; coins+=win; alert(`🎁 Found 🪙 ${win} Coins!`); save(); upd(); }
-    else alert("Need 1 Gem! Earn them with a 5/5 score.");
-}
-function save(){localStorage.setItem('bc_coins',coins);localStorage.setItem('bc_gems',gems);localStorage.setItem('bc_p50',p50);localStorage.setItem('bc_pfreeze',pFreeze);}
-async function start(){score=0;earned=0;curQ=0;streak=0;isFrozen=false;show('quiz');await loadQ();}
-async function loadQ(){
-  done=false; isFrozen=false; clearInterval(tint);
-  document.getElementById('tbar').classList.remove('frozen');
-  document.getElementById('qnum').textContent='Q'+(curQ+1)+'/5';
-  document.getElementById('pw-50').disabled=p50<=0; document.getElementById('pw-freeze').disabled=pFreeze<=0;
-  try {
-    const r=await fetch(`https://opentdb.com/api.php?amount=1&category=${catMap[cat]}&difficulty=${diff}&type=multiple`);
-    const d=await r.json(); const res=d.results[0]; const opts=[...res.incorrect_answers]; const corIdx=Math.floor(Math.random()*4);
-    opts.splice(corIdx,0,res.correct_answer); q={question:res.question,options:opts,correct:corIdx};
-  } catch(e){alert('Connection Error!'); goHome(); return;}
-  document.getElementById('qtxt').textContent=decodeHTML(q.question);
-  var o=document.getElementById('opts'); o.innerHTML='';
-  q.options.forEach((opt,i)=>{ var b=document.createElement('button'); b.className='opt'; b.textContent=decodeHTML(opt); b.onclick=()=>answer(i,b); o.appendChild(b); });
-  startTimer();
-}
-function startTimer(){timer=20;updT();tint=setInterval(()=>{if(!isFrozen){timer--;updT();if(timer<=0){clearInterval(tint);timeout();}}},1000);}
-function updT(){document.getElementById('tbar').style.width=(timer/20)*100+'%';document.getElementById('tsec').textContent=timer+'s';}
-function use5050(){ if(p50<=0||done)return; p50--; save(); upd(); document.getElementById('pw-50').disabled=true;
-    let r=0; document.querySelectorAll('.opt').forEach((b,i)=>{if(i!==q.correct&&r<2){b.classList.add('hidden-opt');r++;}}); }
-function useFreeze(){ if(pFreeze<=0||done)return; pFreeze--; save(); upd(); isFrozen=true; document.getElementById('pw-freeze').disabled=true;
-    document.getElementById('tbar').classList.add('frozen'); setTimeout(()=>{isFrozen=false;document.getElementById('tbar').classList.remove('frozen');},10000); }
-function answer(i,btn){ if(done)return; done=true; clearInterval(tint);
-  if(i===q.correct){ var r={easy:10,medium:25,hard:50}[diff]; var tot=r+(streak>=2?Math.floor(r*0.5):0); score++;earned+=tot;coins+=tot;streak++; btn.classList.add('correct'); }
-  else { streak=0; btn.classList.add('wrong'); revealAns(); }
-  save(); upd(); setTimeout(next,1500); }
-function revealAns(){const os=document.querySelectorAll('.opt');if(os[q.correct])os[q.correct].classList.add('show');}
-function next(){curQ++;if(curQ>=5)showResults();else loadQ();}
-function showResults(){
-  if(score===5){ gems++; document.getElementById('gem-reward').classList.remove('hidden'); }
-  else { document.getElementById('gem-reward').classList.add('hidden'); }
-  save(); document.getElementById('rsub').textContent=cat+' ('+diff+')'; document.getElementById('rearned').textContent=earned; show('results'); upd();
-}
-function shareScore(){
-    const t=`🧠 I earned 🪙 ${earned} and 💎 ${score===5?1:0} in ${cat} trivia! Total: ${coins.toLocaleString()} 🪙. Play: ${window.location.href}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(t)}`,'_blank');
-}
-function goHome(){show('home');upd();}
-function show(s){['home','quiz','results'].forEach(id=>document.getElementById(id).classList[id===s?'remove':'add']('hidden'));}
 upd();
 </script>
 </body>
