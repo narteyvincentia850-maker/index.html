@@ -1,14 +1,24 @@
+<div id="results" class="hidden">
+  <div class="card" style="text-align:center">
+    <div style="font-size:48px;margin:12px 0" id="remoji">🏆</div>
+    <div style="font-size:20px;font-weight:bold;color:gold;margin-bottom:4px" id="rtitle">GREAT!</div>
+    <div style="color:#888;margin-bottom:16px" id="rsub"></div>
+    <div style="color:#888;font-size:12px">COINS EARNED</div>
+    <div class="earned">🪙 <span id="rearned">0</span></div>
+    <div style="color:#888;margin-top:8px" id="rscore"></div>
+  </div>
+  <button class="btn-main" onclick="start()">PLAY AGAIN</button>
+  <button class="btn-gray" onclick="shareScore()" style="margin-top:6px; background:#25d366; color:white; border:none;">SHARE TO FRIENDS 🚀</button>
+  <button class="btn-gray" onclick="goHome()" style="margin-top:6px">CHANGE SETTINGS</button>
+</div>
+
 <script>
-// No API Key needed! Uses OpenTDB (Free Public Trivia Database)
 var coins = +localStorage.getItem('bc_coins') || 0, 
     games = +localStorage.getItem('bc_games') || 0, 
     streak = 0, cat = null, diff = null, curQ = 0, score = 0, earned = 0, q = null, done = false, timer = 20, tint = null;
 
-const catMap = {
-  'Science': 17, 'History': 23, 'Pop Culture': 11, 'Geography': 22, 'Sports': 21, 'Technology': 18
-};
+const catMap = { 'Science': 17, 'History': 23, 'Pop Culture': 11, 'Geography': 22, 'Sports': 21, 'Technology': 18 };
 
-// Function to fix weird characters like &quot; and &#039;
 function decodeHTML(html) {
     var txt = document.createElement("textarea");
     txt.innerHTML = html;
@@ -27,15 +37,11 @@ async function loadQ(){
   document.getElementById('loading').classList.remove('hidden');
   document.getElementById('qwrap').classList.add('hidden');
   document.getElementById('qnum').textContent='Q'+(curQ+1)+'/5';
-  
   q = await getQ();
-  
   document.getElementById('loading').classList.add('hidden');
   if(!q){alert('Error fetching question. Try again!'); goHome(); return;}
-  
   document.getElementById('qtxt').textContent = decodeHTML(q.question);
   var o=document.getElementById('opts'); o.innerHTML='';
-  
   q.options.forEach(function(opt,i){
     var b=document.createElement('button');
     b.className='opt';
@@ -43,15 +49,13 @@ async function loadQ(){
     b.onclick=function(){answer(i,b)};
     o.appendChild(b);
   });
-  
   document.getElementById('qwrap').classList.remove('hidden');
   startTimer();
 }
 
 async function getQ(){
   try {
-    const categoryId = catMap[cat];
-    const url = `https://opentdb.com/api.php?amount=1&category=${categoryId}&difficulty=${diff}&type=multiple`;
+    const url = `https://opentdb.com/api.php?amount=1&category=${catMap[cat]}&difficulty=${diff}&type=multiple`;
     const response = await fetch(url);
     const data = await response.json();
     if(data.response_code !== 0) return null;
@@ -60,11 +64,12 @@ async function getQ(){
     const correctIndex = Math.floor(Math.random() * 4);
     options.splice(correctIndex, 0, res.correct_answer);
     return { question: res.question, options: options, correct: correctIndex };
-  } catch(e) { console.error(e); return null; }
+  } catch(e) { return null; }
 }
 
 function startTimer(){timer=20;updT();tint=setInterval(function(){timer--;updT();if(timer<=0){clearInterval(tint);timeout();}},1000);}
 function updT(){var p=(timer/20)*100;var c=timer>10?'#00f5ff':timer>5?'#facc15':'#f87171';document.getElementById('tbar').style.width=p+'%';document.getElementById('tbar').style.background=c;document.getElementById('tsec').textContent=timer+'s';}
+function timeout(){if(done)return;done=true;streak=0;revealAns();setTimeout(next,1800);}
 
 function answer(i,btn){
   if(done) return; done=true; clearInterval(tint);
@@ -80,7 +85,11 @@ function answer(i,btn){
   upd(); setTimeout(next,1800);
 }
 
-function revealAns(){document.querySelectorAll('.opt')[q.correct].classList.add('show');}
+function revealAns(){
+    const opts = document.querySelectorAll('.opt');
+    if(opts[q.correct]) opts[q.correct].classList.add('show');
+}
+
 function next(){curQ++;if(curQ>=5)showResults();else loadQ();}
 
 function showResults(){
@@ -96,20 +105,18 @@ function showResults(){
   upd();
 }
 
-// NEW: Share Function
 function shareScore() {
-    const text = `🧠 I just earned 🪙 ${earned} BrainCoins playing ${cat} trivia! My total is now ${coins.toLocaleString()} 🪙. Can you beat my score? \n\nPlay here: ${window.location.href}`;
+    const text = `🧠 I just earned 🪙 ${earned} BrainCoins playing ${cat} trivia! Can you beat my score? \n\nPlay here: ${window.location.href}`;
     if (navigator.share) {
         navigator.share({ title: 'BrainCoins', text: text, url: window.location.href });
     } else {
-        // Fallback for desktop browsers
-        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-        window.open(whatsappUrl, '_blank');
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     }
 }
 
 function goHome(){show('home');upd();}
 function show(s){['home','quiz','results'].forEach(function(id){document.getElementById(id).classList[id===s?'remove':'add']('hidden');});}
 upd();
-       </script>
-       
+</script>
+</body>
+</html>
