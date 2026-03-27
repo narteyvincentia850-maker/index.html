@@ -1,75 +1,158 @@
-<div id="results" class="hidden">
-  <div class="card" style="text-align:center">
-    <div style="font-size:48px;margin:12px 0" id="remoji">🏆</div>
-    <div style="font-size:20px;font-weight:bold;color:gold;margin-bottom:4px" id="rtitle">GREAT!</div>
-    <div style="color:#888;margin-bottom:16px" id="rsub"></div>
-    <div style="color:#888;font-size:12px">COINS EARNED</div>
-    <div class="earned">🪙 <span id="rearned">0</span></div>
-    <div style="color:#888;margin-top:8px" id="rscore"></div>
-  </div>
-  <button class="btn-main" onclick="start()">PLAY AGAIN</button>
-  <button class="btn-gray" onclick="shareScore()" style="margin-top:6px; background:#25d366; color:white; border:none;">SHARE TO FRIENDS 🚀</button>
-  <button class="btn-gray" onclick="goHome()" style="margin-top:6px">CHANGE SETTINGS</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrainCoins</title>
+<style>
+/* CORE STYLES */
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a1a;color:#fff;font-family:sans-serif;padding:16px;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+#app-container{width:100%;max-width:500px}
+h1{text-align:center;color:#00f5ff;font-size:28px;margin-bottom:4px;letter-spacing:2px}
+.sub{text-align:center;color:#888;font-size:13px;margin-bottom:16px}
+.wallet{text-align:center;color:gold;font-size:20px;margin-bottom:20px;background:rgba(255,215,0,0.1);padding:8px 20px;border-radius:20px;width:fit-content;margin:0 auto 20px auto}
+
+/* ADSENSE PLACEHOLDER - Keeps layout stable for ads */
+.ad-space{width:100%;min-height:90px;margin:10px 0;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;color:#444;font-size:10px;border-radius:8px}
+
+.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(10px);border-radius:16px;padding:20px;margin-bottom:16px;width:100%}
+.card h3{color:#a855f7;font-size:13px;margin-bottom:12px;text-transform:uppercase}
+
+button{width:100%;padding:14px;border-radius:10px;border:none;font-size:15px;font-weight:bold;cursor:pointer;margin-bottom:8px;transition:0.2s}
+.btn-main{background:linear-gradient(135deg,#7c3aed,#0891b2);color:#fff}
+.btn-main:disabled{background:#333;color:#666;cursor:not-allowed}
+.btn-share{background:#25d366;color:white}
+.btn-gray{background:#1a1a2e;color:#888;border:1px solid #333}
+
+.cats, .diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.cat, .diff{padding:12px 4px;border-radius:10px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:center;font-size:11px}
+.cat.on{border-color:#a855f7;background:#2d1b69;color:#a855f7}
+.diff.on{border-color:#facc15;color:#facc15;background:#1a1500}
+
+.opt{width:100%;padding:14px;border-radius:10px;border:1px solid #333;background:rgba(255,255,255,0.05);color:#fff;cursor:pointer;text-align:left;font-size:15px;margin-bottom:8px}
+.opt.correct{border-color:#4ade80;background:#052e16;color:#4ade80}
+.opt.wrong{border-color:#f87171;background:#2d0a0a;color:#f87171}
+.opt.show{border-color:#4ade80;background:#052e16}
+
+.timer{height:6px;background:#333;border-radius:10px;margin-bottom:16px;overflow:hidden}
+.timer-bar{height:100%;background:#00f5ff;transition:width 1s linear}
+.hidden{display:none}
+.earned{text-align:center;color:gold;font-size:36px;font-weight:bold;margin:12px 0}
+</style>
+</head>
+<body>
+
+<div id="app-container">
+    <h1>🧠 BRAINCOINS</h1>
+    <div class="sub">Play trivia · Earn digital coins</div>
+    
+    <div class="wallet">🪙 <span id="coins">0</span></div>
+
+    <div class="ad-space">ADVERTISEMENT</div>
+
+    <div id="home">
+      <div class="card">
+        <h3>1. CHOOSE CATEGORY</h3>
+        <div class="cats">
+          <div class="cat" onclick="pick(this,'Science')">🔬 Science</div>
+          <div class="cat" onclick="pick(this,'History')">📜 History</div>
+          <div class="cat" onclick="pick(this,'Pop Culture')">🎬 Pop</div>
+          <div class="cat" onclick="pick(this,'Geography')">🌍 Geo</div>
+          <div class="cat" onclick="pick(this,'Sports')">⚽ Sports</div>
+          <div class="cat" onclick="pick(this,'Technology')">💻 Tech</div>
+        </div>
+        <h3>2. CHOOSE DIFFICULTY</h3>
+        <div class="diffs">
+          <div class="diff" onclick="pickD(this,'easy')">EASY</div>
+          <div class="diff" onclick="pickD(this,'medium')">MED</div>
+          <div class="diff" onclick="pickD(this,'hard')">HARD</div>
+        </div>
+        <button class="btn-main" id="startBtn" onclick="start()" disabled>PICK SETTINGS TO START</button>
+      </div>
+    </div>
+
+    <div id="quiz" class="hidden">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span id="qnum" style="color:#888;font-size:13px">Q1/5</span>
+        <span id="tsec" style="color:#00f5ff;font-size:13px;font-weight:bold">20s</span>
+      </div>
+      <div class="timer"><div class="timer-bar" id="tbar" style="width:100%"></div></div>
+      <div id="loading" style="text-align:center; padding:40px; color:#666">Fetching question...</div>
+      <div id="qwrap" class="hidden">
+        <div class="card"><p id="qtxt" style="font-size:18px;line-height:1.5"></p></div>
+        <div id="opts"></div>
+      </div>
+    </div>
+
+    <div id="results" class="hidden">
+      <div class="card" style="text-align:center">
+        <div style="font-size:60px;margin:12px 0" id="remoji">🏆</div>
+        <div style="font-size:24px;font-weight:bold;color:gold;margin-bottom:4px" id="rtitle">GREAT!</div>
+        <div style="color:#888;margin-bottom:16px" id="rsub"></div>
+        <div style="color:#888;font-size:12px">COINS EARNED</div>
+        <div class="earned">🪙 <span id="rearned">0</span></div>
+        <div id="rscore" style="color:#888;margin-bottom:10px"></div>
+      </div>
+      <button class="btn-main" onclick="start()">PLAY AGAIN</button>
+      <button class="btn-share" onclick="shareScore()">SHARE SCORE TO WHATSAPP 🚀</button>
+      <button class="btn-gray" onclick="goHome()" style="margin-top:6px">CHANGE CATEGORY</button>
+    </div>
+
+    <div class="ad-space">ADVERTISEMENT</div>
 </div>
 
 <script>
-var coins = +localStorage.getItem('bc_coins') || 0, 
-    games = +localStorage.getItem('bc_games') || 0, 
-    streak = 0, cat = null, diff = null, curQ = 0, score = 0, earned = 0, q = null, done = false, timer = 20, tint = null;
-
+var coins = +localStorage.getItem('bc_coins') || 0, streak = 0, cat = null, diff = null, curQ = 0, score = 0, earned = 0, q = null, done = false, timer = 20, tint = null;
 const catMap = { 'Science': 17, 'History': 23, 'Pop Culture': 11, 'Geography': 22, 'Sports': 21, 'Technology': 18 };
 
-function decodeHTML(html) {
-    var txt = document.createElement("textarea");
-    txt.innerHTML = html;
-    return txt.value;
-}
-
+function decodeHTML(html) { var txt = document.createElement("textarea"); txt.innerHTML = html; return txt.value; }
 function upd(){document.getElementById('coins').textContent=coins.toLocaleString()}
-function pick(el,c){document.querySelectorAll('.cat').forEach(function(b){b.classList.remove('on')});el.classList.add('on');cat=c;chk();}
-function pickD(el,d){document.querySelectorAll('.diff').forEach(function(b){b.classList.remove('on')});el.classList.add('on');diff=d;chk();}
+function pick(el,c){document.querySelectorAll('.cat').forEach(b=>b.classList.remove('on'));el.classList.add('on');cat=c;chk();}
+function pickD(el,d){document.querySelectorAll('.diff').forEach(b=>b.classList.remove('on'));el.classList.add('on');diff=d;chk();}
 function chk(){var b=document.getElementById('startBtn');if(cat&&diff){b.disabled=false;b.textContent='START GAME →';}}
 
-async function start(){score=0;earned=0;curQ=0;streak=0;show('quiz');await loadQ();}
+async function start(){
+    score=0; earned=0; curQ=0; streak=0;
+    show('quiz'); 
+    await loadQ();
+}
 
 async function loadQ(){
   done=false; clearInterval(tint);
   document.getElementById('loading').classList.remove('hidden');
   document.getElementById('qwrap').classList.add('hidden');
   document.getElementById('qnum').textContent='Q'+(curQ+1)+'/5';
-  q = await getQ();
+  
+  try {
+    const url = `https://opentdb.com/api.php?amount=1&category=${catMap[cat]}&difficulty=${diff}&type=multiple`;
+    const response = await fetch(url);
+    const data = await response.json();
+    if(data.response_code !== 0) throw new Error();
+    const res = data.results[0];
+    const options = [...res.incorrect_answers];
+    const correctIndex = Math.floor(Math.random() * 4);
+    options.splice(correctIndex, 0, res.correct_answer);
+    q = { question: res.question, options: options, correct: correctIndex };
+  } catch(e) { alert('Connection error. Try again.'); goHome(); return; }
+
   document.getElementById('loading').classList.add('hidden');
-  if(!q){alert('Error fetching question. Try again!'); goHome(); return;}
   document.getElementById('qtxt').textContent = decodeHTML(q.question);
   var o=document.getElementById('opts'); o.innerHTML='';
-  q.options.forEach(function(opt,i){
+  q.options.forEach((opt,i)=>{
     var b=document.createElement('button');
     b.className='opt';
-    b.textContent = ['A','B','C','D'][i]+'. ' + decodeHTML(opt);
-    b.onclick=function(){answer(i,b)};
+    b.textContent = decodeHTML(opt);
+    b.onclick=()=>answer(i,b);
     o.appendChild(b);
   });
   document.getElementById('qwrap').classList.remove('hidden');
   startTimer();
 }
 
-async function getQ(){
-  try {
-    const url = `https://opentdb.com/api.php?amount=1&category=${catMap[cat]}&difficulty=${diff}&type=multiple`;
-    const response = await fetch(url);
-    const data = await response.json();
-    if(data.response_code !== 0) return null;
-    const res = data.results[0];
-    const options = [...res.incorrect_answers];
-    const correctIndex = Math.floor(Math.random() * 4);
-    options.splice(correctIndex, 0, res.correct_answer);
-    return { question: res.question, options: options, correct: correctIndex };
-  } catch(e) { return null; }
-}
-
-function startTimer(){timer=20;updT();tint=setInterval(function(){timer--;updT();if(timer<=0){clearInterval(tint);timeout();}},1000);}
-function updT(){var p=(timer/20)*100;var c=timer>10?'#00f5ff':timer>5?'#facc15':'#f87171';document.getElementById('tbar').style.width=p+'%';document.getElementById('tbar').style.background=c;document.getElementById('tsec').textContent=timer+'s';}
-function timeout(){if(done)return;done=true;streak=0;revealAns();setTimeout(next,1800);}
+function startTimer(){timer=20;updT();tint=setInterval(()=>{timer--;updT();if(timer<=0){clearInterval(tint);timeout();}},1000);}
+function updT(){var p=(timer/20)*100;document.getElementById('tbar').style.width=p+'%';document.getElementById('tsec').textContent=timer+'s';}
+function timeout(){if(done)return;done=true;revealAns();setTimeout(next,1800);}
 
 function answer(i,btn){
   if(done) return; done=true; clearInterval(tint);
@@ -85,37 +168,26 @@ function answer(i,btn){
   upd(); setTimeout(next,1800);
 }
 
-function revealAns(){
-    const opts = document.querySelectorAll('.opt');
-    if(opts[q.correct]) opts[q.correct].classList.add('show');
-}
-
+function revealAns(){const opts=document.querySelectorAll('.opt'); if(opts[q.correct])opts[q.correct].classList.add('show');}
 function next(){curQ++;if(curQ>=5)showResults();else loadQ();}
 
 function showResults(){
-  games++; localStorage.setItem('bc_games',games);
-  var e=['🏆','⭐','😊','💪','📚','🎯'][5-score]||'🎯';
-  var t=['PERFECT!','EXCELLENT!','GREAT!','GOOD!','KEEP TRYING!','TRY AGAIN!'][5-score]||'DONE!';
-  document.getElementById('remoji').textContent=e;
-  document.getElementById('rtitle').textContent=t;
-  document.getElementById('rsub').textContent=cat+' · '+diff.toUpperCase();
+  var em=['🏆','⭐','😊','💪','📚','🎯'];
+  document.getElementById('remoji').textContent=em[5-score]||'🎯';
+  document.getElementById('rsub').textContent=cat + ' (' + diff + ')';
   document.getElementById('rearned').textContent=earned;
-  document.getElementById('rscore').textContent=score+'/5 correct · Total: '+coins.toLocaleString()+' 🪙';
+  document.getElementById('rscore').textContent=score+'/5 Correct';
   show('results');
   upd();
 }
 
-function shareScore() {
-    const text = `🧠 I just earned 🪙 ${earned} BrainCoins playing ${cat} trivia! Can you beat my score? \n\nPlay here: ${window.location.href}`;
-    if (navigator.share) {
-        navigator.share({ title: 'BrainCoins', text: text, url: window.location.href });
-    } else {
-        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-    }
+function shareScore(){
+    const text = `🧠 I earned 🪙 ${earned} BrainCoins in ${cat} trivia! Total: ${coins.toLocaleString()} 🪙. Beat me! \n\nPlay: ${window.location.href}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
 }
 
 function goHome(){show('home');upd();}
-function show(s){['home','quiz','results'].forEach(function(id){document.getElementById(id).classList[id===s?'remove':'add']('hidden');});}
+function show(s){['home','quiz','results'].forEach(id=>document.getElementById(id).classList[id===s?'remove':'add']('hidden'));}
 upd();
 </script>
 </body>
