@@ -64,7 +64,6 @@ button{width:100%;padding:12px;border-radius:10px;border:none;font-size:14px;fon
 <div id="adminSetup" class="hidden">
     <div class="card" style="width: 100%; max-width: 400px;">
         <h3>🔑 SYSTEM ACTIVATION</h3>
-        <p style="font-size:11px; color:#666; margin-bottom:10px">Enter your Groq API Key to power the game engine.</p>
         <input type="text" id="ownerKeyInput" placeholder="gsk_xxxx...">
         <button class="btn-main" onclick="saveKey()">ACTIVATE BRAINCOINS</button>
     </div>
@@ -123,17 +122,6 @@ button{width:100%;padding:12px;border-radius:10px;border:none;font-size:14px;fon
     </div>
 </div>
 
-<div id="shopPage" class="page">
-    <div class="card">
-        <h3>🎒 INVENTORY</h3>
-        <div style="font-size:13px; color:#888" id="inventoryText">Hints: 0 | Chests: 0</div>
-    </div>
-    <div class="card">
-        <h3>🛒 COIN SHOP</h3>
-        <div id="shopContainer"></div>
-    </div>
-</div>
-
 <div id="aboutPage" class="page">
     <div class="card">
         <h3>DEVELOPER</h3>
@@ -145,14 +133,26 @@ button{width:100%;padding:12px;border-radius:10px;border:none;font-size:14px;fon
 <div id="contactPage" class="page">
     <div class="card">
         <h3>📧 SUPPORT</h3>
-        <p style="color:#00f5ff; margin-bottom:15px; font-size:14px">narteyvincentia8@gmail.com</p>
-        <input type="text" placeholder="Subject">
-        <textarea rows="4" placeholder="Describe your issue..."></textarea>
-        <button class="btn-main" onclick="alert('Sent to Support!')">SEND MESSAGE</button>
+        <p style="font-size:13px; color:#aaa; margin-bottom:15px">Need help? Send a message to <b>Centia</b>.</p>
+        <input type="text" id="helpSubject" placeholder="Subject">
+        <textarea rows="4" id="helpBody" placeholder="Describe your issue..."></textarea>
+        <button class="btn-main" onclick="sendEmail()">SEND MESSAGE</button>
+    </div>
+</div>
+
+<div id="shopPage" class="page">
+    <div class="card">
+        <h3>🎒 INVENTORY</h3>
+        <div style="font-size:13px; color:#888" id="inventoryText">Hints: 0 | Chests: 0</div>
+    </div>
+    <div class="card">
+        <h3>🛒 COIN SHOP</h3>
+        <div id="shopContainer"></div>
     </div>
 </div>
 
 <script>
+// --- BACKGROUND ANIMATION ---
 const canvas = document.getElementById('canvas-bg');
 const ctx = canvas.getContext('2d');
 let particles = [];
@@ -188,6 +188,15 @@ function animate() {
 }
 initParticles(); animate();
 
+// --- EMAIL LOGIC ---
+function sendEmail() {
+    const sub = document.getElementById('helpSubject').value;
+    const body = document.getElementById('helpBody').value;
+    const email = "narteyvincentia8@gmail.com";
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(body)}`;
+}
+
+// --- GAME LOGIC ---
 let coins = parseInt(localStorage.getItem('bc_coins')) || 0;
 let ownerKey = localStorage.getItem('bc_owner_key') || "";
 let inventory = JSON.parse(localStorage.getItem('bc_inv')) || { hints: 0, chests: 0 };
