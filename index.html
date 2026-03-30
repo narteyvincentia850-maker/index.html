@@ -12,10 +12,11 @@
         .wallet{text-align:center;color:gold;font-size:18px;margin-bottom:16px}
         .card{background:#111;border:1px solid #333;border-radius:12px;padding:16px;margin-bottom:12px}
         .card h3{color:#a855f7;font-size:13px;margin-bottom:8px}
-        input{width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#000;color:#fff;font-size:14px;margin-bottom:12px}
+        input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #444;background:#000;color:#fff;font-size:14px;margin-bottom:8px}
         button{width:100%;padding:12px;border-radius:8px;border:none;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:6px}
         .btn-main{background:linear-gradient(135deg,#7c3aed,#0891b2);color:#fff}
-        .btn-main:disabled{opacity:0.3;cursor:not-allowed}
+        .btn-gold{background:#78350f;color:gold;border:1px solid gold}
+        .btn-gray{background:#1a1a2e;color:#888;border:1px solid #333}
         .cats, .diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
         .cat, .diff{padding:10px 4px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:center;font-size:12px}
         .cat.on, .diff.on{border-color:#a855f7;background:#2d1b69;color:#a855f7}
@@ -23,32 +24,38 @@
         .opt.correct{border-color:#4ade80;background:#052e16;color:#4ade80}
         .opt.wrong{border-color:#f87171;background:#2d0a0a;color:#f87171}
         .hidden{display:none !important}
-        .nav{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto}
-        .nav-btn{padding:8px 14px;border-radius:20px;border:1px solid #333;background:#111;color:#888;font-size:12px}
-        .nav-btn.on{border-color:#00f5ff;color:#00f5ff}
+        .nav{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:5px}
+        .nav-btn{padding:8px 14px;border-radius:20px;border:1px solid #333;background:#111;color:#888;font-size:12px;white-space:nowrap}
+        .nav-btn.on{border-color:#00f5ff;color:#00f5ff;background:#001a2e}
         .page{display:none}
         .page.active{display:block}
-        #adminSetup {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
+        .shop-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;border:1px solid #333;background:#111;margin-bottom:8px}
+        .about-text{color:#aaa;font-size:13px;line-height:1.6}
+        #adminSetup {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.98);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
     </style>
 </head>
 <body>
 
 <div id="adminSetup" class="hidden">
     <div class="card" style="width: 100%; max-width: 400px;">
-        <h3 style="color: #00f5ff;">🔑 ADMIN CONFIG</h3>
-        <p style="font-size: 12px; color: #888; margin-bottom: 10px;">Paste your Groq API Key below. This is saved only in your browser storage.</p>
-        <input type="text" id="ownerKeyInput" placeholder="gsk_xxxxxxxxxxxxxxx">
-        <button class="btn-main" onclick="saveOwnerKey()">SAVE & START</button>
+        <h3 style="color: #00f5ff;">🔑 OWNER SETUP</h3>
+        <p style="font-size: 12px; color: #888; margin-bottom: 12px;">Paste your Groq API Key once to power the game. Users won't see this.</p>
+        <input type="text" id="ownerKeyInput" placeholder="gsk_xxxx...">
+        <button class="btn-main" onclick="saveOwnerKey()">ACTIVATE ENGINE</button>
     </div>
 </div>
 
 <h1>🧠 BRAINCOINS</h1>
-<div class="sub">Play Trivia · Earn Coins</div>
+<div class="sub">Play · Earn · Unlock</div>
 <div class="wallet">🪙 <span id="coins">0</span> coins</div>
 
 <div class="nav">
     <button class="nav-btn on" onclick="goPage('home',this)">🎮 Play</button>
     <button class="nav-btn" onclick="goPage('shop',this)">🛒 Shop</button>
+    <button class="nav-btn" onclick="goPage('badges',this)">🏆 Badges</button>
+    <button class="nav-btn" onclick="goPage('about',this)">ℹ️ About</button>
+    <button class="nav-btn" onclick="goPage('contact',this)">📧 Contact</button>
+    <button class="nav-btn" onclick="goPage('privacy',this)">🔒 Privacy</button>
 </div>
 
 <div id="homePage" class="page active">
@@ -59,6 +66,8 @@
                 <div class="cat" onclick="pick(this,'Science')">🔬 Science</div>
                 <div class="cat" onclick="pick(this,'History')">📜 History</div>
                 <div class="cat" onclick="pick(this,'Ghana & Africa')">🌍 Ghana</div>
+                <div class="cat" onclick="pick(this,'Sports')">⚽ Sports</div>
+                <div class="cat" onclick="pick(this,'Technology')">💻 Tech</div>
             </div>
             <h3>DIFFICULTY</h3>
             <div class="diffs">
@@ -66,21 +75,19 @@
                 <div class="diff" onclick="pickD(this,'medium')">MED</div>
                 <div class="diff" onclick="pickD(this,'hard')">HARD</div>
             </div>
-            <button class="btn-main" id="startBtn" onclick="startGame()" disabled>CHOOSE SETTINGS</button>
+            <button class="btn-main" id="startBtn" onclick="startGame()" disabled>SELECT ABOVE</button>
         </div>
     </div>
-
     <div id="quiz" class="hidden">
-        <div id="loading" style="text-align:center;padding:40px;color:#888">Fetching from AI...</div>
+        <div id="loading" style="text-align:center;padding:40px;color:#888">AI is thinking...</div>
         <div id="qwrap" class="hidden">
             <div class="card"><p id="qtxt" style="font-size: 18px;"></p></div>
             <div id="opts"></div>
         </div>
     </div>
-
     <div id="results" class="hidden">
         <div class="card" style="text-align:center">
-            <h2 id="rtitle">ROUND OVER</h2>
+            <h2 id="rtitle">GREAT JOB!</h2>
             <div style="font-size:40px; margin: 15px 0;">🪙 <span id="rearned">0</span></div>
             <button class="btn-main" onclick="location.reload()">PLAY AGAIN</button>
         </div>
@@ -89,18 +96,56 @@
 
 <div id="shopPage" class="page">
     <div class="card">
-        <h3>🛒 SHOP</h3>
-        <p style="color:#888; font-size:13px">Coming soon! Use your coins for power-ups.</p>
+        <h3>🛒 COIN SHOP</h3>
+        <div id="shopItems">
+            <div class="shop-item">
+                <div><b>Hint Pack</b><br><small>Get 5 hints</small></div>
+                <button class="btn-gold" style="width:auto; padding:5px 10px">100 🪙</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="badgesPage" class="page">
+    <div class="card">
+        <h3>🏆 YOUR BADGES</h3>
+        <p style="color:#666; font-size:12px">Play games to earn trophies!</p>
+    </div>
+</div>
+
+<div id="aboutPage" class="page">
+    <div class="card">
+        <div class="about-text">
+            <h3>About BrainCoins</h3>
+            <p>Created by Vincentia Nartey. Answer questions to earn coins and unlock rewards.</p>
+        </div>
+    </div>
+</div>
+
+<div id="contactPage" class="page">
+    <div class="card">
+        <h3>📧 CONTACT</h3>
+        <input type="text" placeholder="Name">
+        <textarea placeholder="Message"></textarea>
+        <button class="btn-main">SEND</button>
+    </div>
+</div>
+
+<div id="privacyPage" class="page">
+    <div class="card">
+        <div class="about-text">
+            <h3>Privacy</h3>
+            <p>We store progress locally on your device. No personal data is shared.</p>
+        </div>
     </div>
 </div>
 
 <script>
     let ownerKey = localStorage.getItem('bc_owner_key') || "";
     let coins = parseInt(localStorage.getItem('bc_coins')) || 0;
-    let currentCat = null, currentDiff = null;
+    let currentCat, currentDiff;
 
     window.onload = () => {
-        // If key is missing or short, show setup. Otherwise hide it.
         if (!ownerKey || ownerKey.length < 15) {
             document.getElementById('adminSetup').classList.remove('hidden');
         } else {
@@ -114,18 +159,15 @@
         if (val.length > 15) {
             localStorage.setItem('bc_owner_key', val);
             ownerKey = val;
-            // Immediate hide without alert to prevent mobile "freezing"
             document.getElementById('adminSetup').style.display = 'none';
-            document.getElementById('adminSetup').classList.add('hidden');
         } else {
-            alert("Please paste a valid Groq API key.");
+            alert("Paste your gsk_ key!");
         }
     }
 
     function goPage(p, btn) {
         document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
-        const target = document.getElementById(p + 'Page');
-        if(target) target.classList.add('active');
+        document.getElementById(p + 'Page').classList.add('active');
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
         if(btn) btn.classList.add('on');
     }
@@ -141,11 +183,7 @@
     }
 
     function checkReady() {
-        if (currentCat && currentDiff) {
-            const btn = document.getElementById('startBtn');
-            btn.disabled = false;
-            btn.textContent = "START GAME";
-        }
+        if (currentCat && currentDiff) document.getElementById('startBtn').disabled = false;
     }
 
     async function startGame() {
@@ -157,14 +195,9 @@
     async function loadQuestion() {
         document.getElementById('loading').style.display = 'block';
         document.getElementById('qwrap').classList.add('hidden');
-        const question = await fetchGroqTrivia();
+        const question = await fetchGroq();
         document.getElementById('loading').style.display = 'none';
-        
-        if (!question) {
-            alert("Connection Error. Try again.");
-            location.reload();
-            return;
-        }
+        if (!question) return;
 
         document.getElementById('qtxt').textContent = question.question;
         const optsDiv = document.getElementById('opts');
@@ -179,32 +212,25 @@
         document.getElementById('qwrap').classList.remove('hidden');
     }
 
-    async function fetchGroqTrivia() {
+    async function fetchGroq() {
         try {
             const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${ownerKey}`,
-                    'Content-Type': 'application/json'
-                },
+                headers: {'Authorization': `Bearer ${ownerKey}`, 'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     model: "llama-3.3-70b-versatile",
-                    messages: [{role: "user", content: `Return ONLY JSON format: {"question":"...","options":["A","B","C","D"],"correct":0} for a ${currentDiff} trivia question about ${currentCat}.`}],
+                    messages: [{role: "user", content: `JSON ONLY: {"question":"...","options":["A","B","C","D"],"correct":0} for ${currentDiff} trivia on ${currentCat}.`}],
                     response_format: { type: "json_object" }
                 })
             });
             const data = await resp.json();
             return JSON.parse(data.choices[0].message.content);
-        } catch (e) {
-            console.error(e);
-            return null;
-        }
+        } catch (e) { return null; }
     }
 
     function handleAnswer(selected, correct, btn) {
         const options = document.querySelectorAll('.opt');
         options.forEach(opt => opt.style.pointerEvents = 'none');
-        
         if (selected === correct) {
             btn.classList.add('correct');
             coins += 25;
@@ -212,10 +238,8 @@
             btn.classList.add('wrong');
             options[correct].classList.add('correct');
         }
-        
         localStorage.setItem('bc_coins', coins);
         document.getElementById('coins').textContent = coins;
-        
         setTimeout(() => {
             document.getElementById('quiz').classList.add('hidden');
             document.getElementById('results').classList.remove('hidden');
