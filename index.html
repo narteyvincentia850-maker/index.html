@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BrainCoins - Play Trivia & Earn Coins</title>
     <style>
-        /* [Keeping your existing styles for brevity] */
         *{margin:0;padding:0;box-sizing:border-box}
         body{background:#0a0a1a;color:#fff;font-family:sans-serif;padding:16px;min-height:100vh}
         h1{text-align:center;color:#00f5ff;font-size:24px;margin-bottom:4px}
@@ -13,7 +12,7 @@
         .wallet{text-align:center;color:gold;font-size:18px;margin-bottom:16px}
         .card{background:#111;border:1px solid #333;border-radius:12px;padding:16px;margin-bottom:12px}
         .card h3{color:#a855f7;font-size:13px;margin-bottom:8px}
-        input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #444;background:#000;color:#fff;font-size:14px;margin-bottom:8px}
+        input,textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#000;color:#fff;font-size:14px;margin-bottom:12px}
         button{width:100%;padding:12px;border-radius:8px;border:none;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:6px}
         .btn-main{background:linear-gradient(135deg,#7c3aed,#0891b2);color:#fff}
         .btn-gold{background:#78350f;color:gold;border:1px solid gold}
@@ -24,8 +23,6 @@
         .opt{width:100%;padding:12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:left;font-size:15px;margin-bottom:8px}
         .opt.correct{border-color:#4ade80;background:#052e16;color:#4ade80}
         .opt.wrong{border-color:#f87171;background:#2d0a0a;color:#f87171}
-        .timer{height:6px;background:#333;border-radius:3px;margin-bottom:16px}
-        .timer-bar{height:100%;border-radius:3px;background:#00f5ff;transition:width 1s linear}
         .hidden{display:none}
         .nav{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto}
         .nav-btn{padding:8px 14px;border-radius:20px;border:1px solid #333;background:#111;color:#888;font-size:12px}
@@ -33,10 +30,10 @@
         .page{display:none}
         .page.active{display:block}
 
-        /* NEW OWNER SETUP STYLE */
+        /* ADMIN OVERLAY */
         #adminSetup {
             position: fixed; top:0; left:0; width:100%; height:100%; 
-            background: rgba(0,0,0,0.9); z-index: 9999; 
+            background: rgba(0,0,0,0.95); z-index: 10000; 
             display: flex; align-items: center; justify-content: center; padding: 20px;
         }
     </style>
@@ -45,66 +42,64 @@
 
 <div id="adminSetup" class="hidden">
     <div class="card" style="width: 100%; max-width: 400px;">
-        <h3 style="color: #00f5ff;">🔑 OWNER SETUP</h3>
-        <p style="font-size: 12px; color: #888; margin-bottom: 10px;">Enter your Groq API Key to power the game for all users.</p>
-        <input type="password" id="ownerKeyInput" placeholder="gsk_xxxx....">
-        <button class="btn-main" onclick="saveOwnerKey()">ACTIVATE GAME</button>
+        <h3 style="color: #00f5ff;">🔑 ADMIN CONFIG</h3>
+        <p style="font-size: 12px; color: #888; margin-bottom: 10px;">Paste your Groq API Key. This is saved only in your browser.</p>
+        <input type="text" id="ownerKeyInput" placeholder="Enter gsk_... key here">
+        <button class="btn-main" onclick="saveOwnerKey()">SAVE & START</button>
+        <p style="font-size: 10px; color: #555; text-align: center;">Users won't see your key in the code.</p>
     </div>
 </div>
 
 <h1>🧠 BRAINCOINS</h1>
-<div class="sub">Answer questions · Earn coins · Unlock rewards</div>
+<div class="sub">Play Trivia · Earn Coins</div>
 <div class="wallet">🪙 <span id="coins">0</span> coins</div>
 
 <div class="nav">
     <button class="nav-btn on" onclick="goPage('home',this)">🎮 Play</button>
     <button class="nav-btn" onclick="goPage('shop',this)">🛒 Shop</button>
-    <button class="nav-btn" onclick="goPage('about',this)">ℹ️ About</button>
 </div>
 
 <div id="homePage" class="page active">
     <div id="home">
         <div class="card">
-            <h3>PICK CATEGORY</h3>
+            <h3>CATEGORY</h3>
             <div class="cats">
                 <div class="cat" onclick="pick(this,'Science')">🔬 Science</div>
                 <div class="cat" onclick="pick(this,'History')">📜 History</div>
                 <div class="cat" onclick="pick(this,'Ghana & Africa')">🌍 Ghana</div>
             </div>
-            <h3>PICK DIFFICULTY</h3>
+            <h3>DIFFICULTY</h3>
             <div class="diffs">
                 <div class="diff" onclick="pickD(this,'easy')">EASY</div>
                 <div class="diff" onclick="pickD(this,'medium')">MED</div>
                 <div class="diff" onclick="pickD(this,'hard')">HARD</div>
             </div>
-            <button class="btn-main" id="startBtn" onclick="startGame()" disabled>SELECT ABOVE</button>
+            <button class="btn-main" id="startBtn" onclick="startGame()" disabled>CHOOSE SETTINGS</button>
         </div>
     </div>
 
     <div id="quiz" class="hidden">
-        <div id="loading" style="text-align:center;padding:20px;">Generating...</div>
+        <div id="loading" style="text-align:center;padding:40px;color:#888">Fetching from AI...</div>
         <div id="qwrap" class="hidden">
-            <div class="card"><p id="qtxt"></p></div>
+            <div class="card"><p id="qtxt" style="font-size: 18px;"></p></div>
             <div id="opts"></div>
         </div>
     </div>
 
     <div id="results" class="hidden">
         <div class="card" style="text-align:center">
-            <h2 id="rtitle">DONE!</h2>
-            <div class="earned">🪙 <span id="rearned">0</span></div>
+            <h2 id="rtitle">ROUND OVER</h2>
+            <div style="font-size:40px; margin: 15px 0;">🪙 <span id="rearned">0</span></div>
             <button class="btn-main" onclick="location.reload()">PLAY AGAIN</button>
         </div>
     </div>
 </div>
 
 <script>
-    // 1. CONFIGURATION & STATE
-    let ownerKey = localStorage.getItem('bc_owner_key') || ""; // Your key
+    let ownerKey = localStorage.getItem('bc_owner_key') || "";
     let coins = parseInt(localStorage.getItem('bc_coins')) || 0;
-    let currentCat = null, currentDiff = null, currentQ = 0, score = 0;
+    let currentCat = null, currentDiff = null, score = 0;
 
-    // 2. INITIALIZE
     window.onload = () => {
         if (!ownerKey) {
             document.getElementById('adminSetup').classList.remove('hidden');
@@ -113,18 +108,16 @@
     };
 
     function saveOwnerKey() {
-        const val = document.getElementById('ownerKeyInput').value;
+        const val = document.getElementById('ownerKeyInput').value.trim();
         if (val.startsWith('gsk_')) {
             localStorage.setItem('bc_owner_key', val);
             ownerKey = val;
             document.getElementById('adminSetup').classList.add('hidden');
-            alert("App Ready!");
         } else {
-            alert("Invalid Key format.");
+            alert("Invalid key. Must start with gsk_");
         }
     }
 
-    // 3. GAME LOGIC
     function pick(el, c) {
         document.querySelectorAll('.cat').forEach(b => b.classList.remove('on'));
         el.classList.add('on'); currentCat = c; checkReady();
@@ -136,7 +129,11 @@
     }
 
     function checkReady() {
-        if (currentCat && currentDiff) document.getElementById('startBtn').disabled = false;
+        if (currentCat && currentDiff) {
+            const btn = document.getElementById('startBtn');
+            btn.disabled = false;
+            btn.textContent = "START GAME";
+        }
     }
 
     async function startGame() {
@@ -187,38 +184,36 @@
             const data = await resp.json();
             return JSON.parse(data.choices[0].message.content);
         } catch (e) {
-            alert("Error fetching question. Check API Key.");
+            alert("API Error. Key might be wrong or expired.");
             return null;
         }
     }
 
     function handleAnswer(selected, correct, btn) {
+        const options = document.querySelectorAll('.opt');
+        options.forEach(opt => opt.style.pointerEvents = 'none');
+
         if (selected === correct) {
             btn.classList.add('correct');
-            coins += 20;
             score++;
+            coins += 25;
         } else {
             btn.classList.add('wrong');
+            options[correct].classList.add('correct');
         }
+        
         localStorage.setItem('bc_coins', coins);
         document.getElementById('coins').textContent = coins;
         
         setTimeout(() => {
-            currentQ++;
-            if (currentQ < 3) loadQuestion(); // Play 3 questions per round
-            else showFinalResults();
-        }, 1500);
-    }
-
-    function showFinalResults() {
-        document.getElementById('quiz').classList.add('hidden');
-        document.getElementById('results').classList.remove('hidden');
-        document.getElementById('rearned').textContent = score * 20;
+            document.getElementById('quiz').classList.add('hidden');
+            document.getElementById('results').classList.remove('hidden');
+            document.getElementById('rearned').textContent = (selected === correct) ? 25 : 0;
+        }, 2000);
     }
 
     function goPage(p, btn) {
-        document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
-        document.getElementById(p + 'Page').classList.add('active');
+        // Logic for shop can be added here
     }
 </script>
 </body>
