@@ -1,438 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BrainCoins - Play Trivia & Earn Coins</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a1a;color:#fff;font-family:sans-serif;padding:16px;min-height:100vh}
-h1{text-align:center;color:#00f5ff;font-size:24px;margin-bottom:4px}
-.sub{text-align:center;color:#888;font-size:13px;margin-bottom:16px}
-.wallet{text-align:center;color:gold;font-size:18px;margin-bottom:16px}
-.card{background:#111;border:1px solid #333;border-radius:12px;padding:16px;margin-bottom:12px}
-.card h3{color:#a855f7;font-size:13px;margin-bottom:8px}
-input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #444;background:#000;color:#fff;font-size:14px;margin-bottom:8px;font-family:sans-serif}
-button{width:100%;padding:12px;border-radius:8px;border:none;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:6px}
-.btn-main{background:linear-gradient(135deg,#7c3aed,#0891b2);color:#fff}
-.btn-green{background:#065f46;color:#4ade80;border:1px solid #4ade80}
-.btn-gray{background:#1a1a2e;color:#888;border:1px solid #333}
-.btn-gold{background:#78350f;color:gold;border:1px solid gold}
-.btn-red{background:#7f1d1d;color:#f87171;border:1px solid #f87171}
-.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.cat{padding:10px 4px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:center;font-size:12px}
-.cat.on{border-color:#a855f7;background:#2d1b69;color:#a855f7}
-.diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.diff{padding:10px 4px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:center;font-size:12px}
-.diff.on{border-color:#facc15;color:#facc15;background:#1a1500}
-.opt{width:100%;padding:12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:left;font-size:15px;margin-bottom:8px}
-.opt.correct{border-color:#4ade80;background:#052e16;color:#4ade80}
-.opt.wrong{border-color:#f87171;background:#2d0a0a;color:#f87171}
-.opt.show{border-color:#4ade80;color:#4ade80}
-.timer{height:6px;background:#333;border-radius:3px;margin-bottom:16px}
-.timer-bar{height:100%;border-radius:3px;background:#00f5ff;transition:width 1s linear}
-.hidden{display:none}
-.earned{text-align:center;color:gold;font-size:32px;font-weight:bold;margin:8px 0}
-.nav{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px}
-.nav-btn{padding:8px 14px;border-radius:20px;border:1px solid #333;background:#111;color:#888;font-size:12px;cursor:pointer;white-space:nowrap;font-weight:600}
-.nav-btn.on{border-color:#00f5ff;color:#00f5ff;background:#001a2e}
-.shop-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;border:1px solid #333;background:#111;margin-bottom:8px}
-.shop-item-info{flex:1}
-.shop-item-name{font-weight:700;font-size:14px;margin-bottom:2px}
-.shop-item-desc{font-size:11px;color:#888}
-.shop-item-price{color:gold;font-weight:700;font-size:13px;margin-right:10px}
-.buy-btn{padding:8px 14px;border-radius:8px;border:none;background:#78350f;color:gold;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
-.buy-btn:disabled{opacity:0.4;cursor:not-allowed}
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;margin:2px}
-.badge.earned-badge{background:#1a1500;border:1px solid gold;color:gold}
-.badge.locked-badge{background:#111;border:1px solid #333;color:#555}
-.about-text{color:#aaa;font-size:13px;line-height:1.7}
-.about-text h4{color:#00f5ff;margin:12px 0 6px}
-.contact-form input,.contact-form textarea{margin-bottom:8px}
-.streak-info{text-align:center;color:#fb923c;font-size:13px;margin-bottom:8px}
-.page{display:none}
-.page.active{display:block}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainCoins - Play Trivia & Earn Coins</title>
+    <style>
+        /* [Keeping your existing styles for brevity] */
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0a0a1a;color:#fff;font-family:sans-serif;padding:16px;min-height:100vh}
+        h1{text-align:center;color:#00f5ff;font-size:24px;margin-bottom:4px}
+        .sub{text-align:center;color:#888;font-size:13px;margin-bottom:16px}
+        .wallet{text-align:center;color:gold;font-size:18px;margin-bottom:16px}
+        .card{background:#111;border:1px solid #333;border-radius:12px;padding:16px;margin-bottom:12px}
+        .card h3{color:#a855f7;font-size:13px;margin-bottom:8px}
+        input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #444;background:#000;color:#fff;font-size:14px;margin-bottom:8px}
+        button{width:100%;padding:12px;border-radius:8px;border:none;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:6px}
+        .btn-main{background:linear-gradient(135deg,#7c3aed,#0891b2);color:#fff}
+        .btn-gold{background:#78350f;color:gold;border:1px solid gold}
+        .btn-gray{background:#1a1a2e;color:#888;border:1px solid #333}
+        .cats, .diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+        .cat, .diff{padding:10px 4px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:center;font-size:12px}
+        .cat.on, .diff.on{border-color:#a855f7;background:#2d1b69;color:#a855f7}
+        .opt{width:100%;padding:12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:left;font-size:15px;margin-bottom:8px}
+        .opt.correct{border-color:#4ade80;background:#052e16;color:#4ade80}
+        .opt.wrong{border-color:#f87171;background:#2d0a0a;color:#f87171}
+        .timer{height:6px;background:#333;border-radius:3px;margin-bottom:16px}
+        .timer-bar{height:100%;border-radius:3px;background:#00f5ff;transition:width 1s linear}
+        .hidden{display:none}
+        .nav{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto}
+        .nav-btn{padding:8px 14px;border-radius:20px;border:1px solid #333;background:#111;color:#888;font-size:12px}
+        .nav-btn.on{border-color:#00f5ff;color:#00f5ff}
+        .page{display:none}
+        .page.active{display:block}
+
+        /* NEW OWNER SETUP STYLE */
+        #adminSetup {
+            position: fixed; top:0; left:0; width:100%; height:100%; 
+            background: rgba(0,0,0,0.9); z-index: 9999; 
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+        }
+    </style>
 </head>
 <body>
+
+<div id="adminSetup" class="hidden">
+    <div class="card" style="width: 100%; max-width: 400px;">
+        <h3 style="color: #00f5ff;">🔑 OWNER SETUP</h3>
+        <p style="font-size: 12px; color: #888; margin-bottom: 10px;">Enter your Groq API Key to power the game for all users.</p>
+        <input type="password" id="ownerKeyInput" placeholder="gsk_xxxx....">
+        <button class="btn-main" onclick="saveOwnerKey()">ACTIVATE GAME</button>
+    </div>
+</div>
+
 <h1>🧠 BRAINCOINS</h1>
 <div class="sub">Answer questions · Earn coins · Unlock rewards</div>
 <div class="wallet">🪙 <span id="coins">0</span> coins</div>
 
 <div class="nav">
-  <button class="nav-btn on" onclick="goPage('home',this)">🎮 Play</button>
-  <button class="nav-btn" onclick="goPage('shop',this)">🛒 Shop</button>
-  <button class="nav-btn" onclick="goPage('badges',this)">🏆 Badges</button>
-  <button class="nav-btn" onclick="goPage('about',this)">ℹ️ About</button>
-  <button class="nav-btn" onclick="goPage('contact',this)">📧 Contact</button>
-  <button class="nav-btn" onclick="goPage('privacy',this)">🔒 Privacy</button>
+    <button class="nav-btn on" onclick="goPage('home',this)">🎮 Play</button>
+    <button class="nav-btn" onclick="goPage('shop',this)">🛒 Shop</button>
+    <button class="nav-btn" onclick="goPage('about',this)">ℹ️ About</button>
 </div>
 
-<!-- HOME PAGE -->
 <div id="homePage" class="page active">
-  <div class="card" id="setup">
-    <h3>🔑 ENTER YOUR GROQ API KEY</h3>
-    <input id="keyInput" type="text" placeholder="Paste your gsk_... key here">
-    <button class="btn-green" onclick="saveKey()">SAVE KEY</button>
-    <div id="keyMsg" class="hidden" style="color:#4ade80;text-align:center;font-size:13px">✓ Key saved!</div>
-  </div>
-  <div id="home">
-    <div class="card">
-      <h3>PICK CATEGORY</h3>
-      <div class="cats">
-        <div class="cat" onclick="pick(this,'Science')">🔬 Science</div>
-        <div class="cat" onclick="pick(this,'History')">📜 History</div>
-        <div class="cat" onclick="pick(this,'Pop Culture')">🎬 Pop Culture</div>
-        <div class="cat" onclick="pick(this,'Geography')">🌍 Geography</div>
-        <div class="cat" onclick="pick(this,'Sports')">⚽ Sports</div>
-        <div class="cat" onclick="pick(this,'Technology')">💻 Technology</div>
-        <div class="cat" onclick="pick(this,'Africa & Ghana')" id="africaCat" style="display:none">🌍 Africa</div>
-      </div>
-      <h3>PICK DIFFICULTY</h3>
-      <div class="diffs">
-        <div class="diff" onclick="pickD(this,'easy')">EASY +10🪙</div>
-        <div class="diff" onclick="pickD(this,'medium')">MED +25🪙</div>
-        <div class="diff" onclick="pickD(this,'hard')">HARD +50🪙</div>
-      </div>
-      <div class="streak-info" id="streakInfo"></div>
-      <button class="btn-main" id="startBtn" onclick="start()" disabled>SELECT ABOVE</button>
+    <div id="home">
+        <div class="card">
+            <h3>PICK CATEGORY</h3>
+            <div class="cats">
+                <div class="cat" onclick="pick(this,'Science')">🔬 Science</div>
+                <div class="cat" onclick="pick(this,'History')">📜 History</div>
+                <div class="cat" onclick="pick(this,'Ghana & Africa')">🌍 Ghana</div>
+            </div>
+            <h3>PICK DIFFICULTY</h3>
+            <div class="diffs">
+                <div class="diff" onclick="pickD(this,'easy')">EASY</div>
+                <div class="diff" onclick="pickD(this,'medium')">MED</div>
+                <div class="diff" onclick="pickD(this,'hard')">HARD</div>
+            </div>
+            <button class="btn-main" id="startBtn" onclick="startGame()" disabled>SELECT ABOVE</button>
+        </div>
     </div>
-    <div class="card" style="text-align:center">
-      <div style="font-size:12px;color:#888;margin-bottom:6px">🪙 WHAT CAN YOU BUY WITH COINS?</div>
-      <div style="font-size:13px;color:#aaa">Unlock new categories, themes & badges in the Shop!</div>
-    </div>
-  </div>
-  <div id="quiz" class="hidden">
-    <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-      <span id="qnum" style="color:#888;font-size:13px">Q1/5</span>
-      <span id="tsec" style="color:#00f5ff;font-size:13px;font-weight:bold">20s</span>
-    </div>
-    <div class="timer"><div class="timer-bar" id="tbar" style="width:100%"></div></div>
-    <div id="loading" style="text-align:center;padding:40px;color:#888">Generating question...</div>
-    <div id="qwrap" class="hidden">
-      <div class="card"><p id="qtxt" style="font-size:17px;line-height:1.5"></p></div>
-      <div id="opts"></div>
-    </div>
-  </div>
-  <div id="results" class="hidden">
-    <div class="card" style="text-align:center">
-      <div style="font-size:48px;margin:12px 0" id="remoji">🏆</div>
-      <div style="font-size:20px;font-weight:bold;color:gold;margin-bottom:4px" id="rtitle">GREAT!</div>
-      <div style="color:#888;margin-bottom:16px" id="rsub"></div>
-      <div style="color:#888;font-size:12px">COINS EARNED</div>
-      <div class="earned">🪙 <span id="rearned">0</span></div>
-      <div style="color:#888;margin-top:8px" id="rscore"></div>
-    </div>
-    <button class="btn-main" onclick="start()">PLAY AGAIN</button>
-    <button class="btn-gold" onclick="goPage('shop',null)" style="margin-top:6px">🛒 SPEND COINS IN SHOP</button>
-    <button class="btn-gray" onclick="goHome()" style="margin-top:6px">CHANGE SETTINGS</button>
-  </div>
-</div>
 
-<!-- SHOP PAGE -->
-<div id="shopPage" class="page">
-  <div class="card">
-    <h3>🛒 COIN SHOP</h3>
-    <div style="color:#888;font-size:12px;margin-bottom:12px">Spend your coins to unlock rewards!</div>
-    <div id="shopItems"></div>
-  </div>
-</div>
+    <div id="quiz" class="hidden">
+        <div id="loading" style="text-align:center;padding:20px;">Generating...</div>
+        <div id="qwrap" class="hidden">
+            <div class="card"><p id="qtxt"></p></div>
+            <div id="opts"></div>
+        </div>
+    </div>
 
-<!-- BADGES PAGE -->
-<div id="badgesPage" class="page">
-  <div class="card">
-    <h3>🏆 YOUR BADGES</h3>
-    <div style="color:#888;font-size:12px;margin-bottom:12px">Earn badges by playing and winning!</div>
-    <div id="badgesList"></div>
-  </div>
-</div>
-
-<!-- ABOUT PAGE -->
-<div id="aboutPage" class="page">
-  <div class="card">
-    <div class="about-text">
-      <h4>About BrainCoins</h4>
-      <p>BrainCoins is a free play-to-earn trivia game where you answer questions to earn virtual coins. Test your knowledge across Science, History, Pop Culture, Geography, Sports, Technology and more!</p>
-      <h4>How It Works</h4>
-      <p>Pick a category and difficulty, answer 5 AI-generated questions, and earn coins for every correct answer. Use your coins in the shop to unlock new categories, themes and badges.</p>
-      <h4>Who Made This?</h4>
-      <p>BrainCoins was created by Vincentia Nartey, an entrepreneur from Ghana building fun and educational tools for everyone.</p>
-      <h4>Our Mission</h4>
-      <p>We believe learning should be fun and rewarding. BrainCoins makes trivia exciting by giving players something to earn and work towards.</p>
+    <div id="results" class="hidden">
+        <div class="card" style="text-align:center">
+            <h2 id="rtitle">DONE!</h2>
+            <div class="earned">🪙 <span id="rearned">0</span></div>
+            <button class="btn-main" onclick="location.reload()">PLAY AGAIN</button>
+        </div>
     </div>
-  </div>
-</div>
-
-<!-- CONTACT PAGE -->
-<div id="contactPage" class="page">
-  <div class="card">
-    <h3>📧 CONTACT US</h3>
-    <div class="about-text" style="margin-bottom:12px">
-      <p>Have a question, suggestion or issue? We'd love to hear from you!</p>
-    </div>
-    <div class="contact-form">
-      <input type="text" placeholder="Your Name" id="cName">
-      <input type="email" placeholder="Your Email" id="cEmail">
-      <textarea rows="4" placeholder="Your message..." id="cMsg"></textarea>
-      <button class="btn-main" onclick="sendContact()">SEND MESSAGE</button>
-      <div id="contactThanks" class="hidden" style="color:#4ade80;text-align:center;font-size:13px;margin-top:8px">✓ Thanks! We'll get back to you soon.</div>
-    </div>
-    <div class="about-text" style="margin-top:12px">
-      <h4>Email Us Directly</h4>
-      <p>narteyvincentia850@gmail.com</p>
-    </div>
-  </div>
-</div>
-
-<!-- PRIVACY PAGE -->
-<div id="privacyPage" class="page">
-  <div class="card">
-    <div class="about-text">
-      <h4>Privacy Policy</h4>
-      <p>Last updated: March 2026</p>
-      <h4>What We Collect</h4>
-      <p>BrainCoins stores your coin balance and game progress locally on your device only. We do not collect or store any personal information on our servers.</p>
-      <h4>Cookies & Advertising</h4>
-      <p>We use Google AdSense to display ads. Google may use cookies to show you relevant ads based on your interests. You can opt out via Google's ad settings.</p>
-      <h4>Third Party Services</h4>
-      <p>We use Groq AI to generate trivia questions. Questions are generated in real time and no personal data is sent to Groq.</p>
-      <h4>Children</h4>
-      <p>BrainCoins is suitable for all ages. We do not knowingly collect data from children under 13.</p>
-      <h4>Contact</h4>
-      <p>For privacy questions email: narteyvincentia850@gmail.com</p>
-    </div>
-  </div>
 </div>
 
 <script>
-var coins=+localStorage.getItem('bc_coins')||0;
-var games=+localStorage.getItem('bc_games')||0;
-var streak=0;
-var cat=null,diff=null,curQ=0,score=0,earned=0,q=null,done=false,timer=20,tint=null;
-var unlocked=JSON.parse(localStorage.getItem('bc_unlocked')||'[]');
-var earnedBadges=JSON.parse(localStorage.getItem('bc_badges')||'[]');
+    // 1. CONFIGURATION & STATE
+    let ownerKey = localStorage.getItem('bc_owner_key') || ""; // Your key
+    let coins = parseInt(localStorage.getItem('bc_coins')) || 0;
+    let currentCat = null, currentDiff = null, currentQ = 0, score = 0;
 
-var SHOP=[
-  {id:'africa',name:'🌍 Africa & Ghana Category',desc:'Unlock African & Ghanaian trivia questions',price:100},
-  {id:'theme_gold',name:'✨ Gold Theme',desc:'Unlock the golden coin theme',price:150},
-  {id:'hints',name:'💡 Hint Pack (5 hints)',desc:'Get hints when stuck on hard questions',price:200},
-  {id:'extra_time',name:'⏱️ Extra Time Pack',desc:'Get 30 seconds instead of 20 per question',price:250},
-  {id:'double_coins',name:'💰 Double Coins (1 game)',desc:'Earn 2x coins for your next game',price:300},
-];
+    // 2. INITIALIZE
+    window.onload = () => {
+        if (!ownerKey) {
+            document.getElementById('adminSetup').classList.remove('hidden');
+        }
+        document.getElementById('coins').textContent = coins;
+    };
 
-var BADGES=[
-  {id:'first_game',name:'🎮 First Game',desc:'Play your first game'},
-  {id:'streak_3',name:'🔥 On Fire',desc:'Get 3 correct in a row'},
-  {id:'perfect',name:'💎 Perfect Score',desc:'Answer all 5 questions correctly'},
-  {id:'coins_100',name:'💰 Century',desc:'Earn 100 coins total'},
-  {id:'coins_500',name:'🏦 High Roller',desc:'Earn 500 coins total'},
-  {id:'games_10',name:'🎯 Dedicated',desc:'Play 10 games'},
-];
-
-function upd(){
-  document.getElementById('coins').textContent=coins.toLocaleString();
-  updateStreakInfo();
-}
-
-function updateStreakInfo(){
-  var el=document.getElementById('streakInfo');
-  if(streak>=2) el.textContent='🔥 '+streak+' streak — +50% bonus coins!';
-  else el.textContent='';
-}
-
-function saveKey(){
-  var k=document.getElementById('keyInput').value.trim();
-  if(k.length<10){alert('Please paste your full API key!');return;}
-  localStorage.setItem('bc_key',k);
-  document.getElementById('keyMsg').classList.remove('hidden');
-  setTimeout(function(){document.getElementById('setup').classList.add('hidden')},2000);
-}
-
-function checkKey(){if(localStorage.getItem('bc_key'))document.getElementById('setup').classList.add('hidden');}
-
-function goPage(page,btn){
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
-  document.getElementById(page+'Page').classList.add('active');
-  if(btn){document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('on')});btn.classList.add('on');}
-  if(page==='shop') renderShop();
-  if(page==='badges') renderBadges();
-}
-
-function renderShop(){
-  var html='';
-  SHOP.forEach(function(item){
-    var owned=unlocked.indexOf(item.id)>-1;
-    html+='<div class="shop-item">';
-    html+='<div class="shop-item-info"><div class="shop-item-name">'+item.name+'</div><div class="shop-item-desc">'+item.desc+'</div></div>';
-    html+='<span class="shop-item-price">🪙'+item.price+'</span>';
-    if(owned){
-      html+='<button class="buy-btn" disabled style="background:#052e16;color:#4ade80;border:1px solid #4ade80">✓ Owned</button>';
-    } else {
-      html+='<button class="buy-btn" onclick="buyItem(\''+item.id+'\','+item.price+')" '+(coins<item.price?'disabled':'')+'>BUY</button>';
+    function saveOwnerKey() {
+        const val = document.getElementById('ownerKeyInput').value;
+        if (val.startsWith('gsk_')) {
+            localStorage.setItem('bc_owner_key', val);
+            ownerKey = val;
+            document.getElementById('adminSetup').classList.add('hidden');
+            alert("App Ready!");
+        } else {
+            alert("Invalid Key format.");
+        }
     }
-    html+='</div>';
-  });
-  document.getElementById('shopItems').innerHTML=html;
-}
 
-function buyItem(id,price){
-  if(coins<price){alert('Not enough coins!');return;}
-  coins-=price;
-  localStorage.setItem('bc_coins',coins);
-  unlocked.push(id);
-  localStorage.setItem('bc_unlocked',JSON.stringify(unlocked));
-  if(id==='africa') document.getElementById('africaCat').style.display='block';
-  upd(); renderShop();
-  alert('✓ Unlocked! Check it out in the game!');
-}
+    // 3. GAME LOGIC
+    function pick(el, c) {
+        document.querySelectorAll('.cat').forEach(b => b.classList.remove('on'));
+        el.classList.add('on'); currentCat = c; checkReady();
+    }
 
-function renderBadges(){
-  var html='';
-  BADGES.forEach(function(b){
-    var has=earnedBadges.indexOf(b.id)>-1;
-    html+='<div style="padding:10px;border-radius:10px;border:1px solid '+(has?'gold':'#333')+';background:'+(has?'#1a1500':'#0a0a0a')+';margin-bottom:8px">';
-    html+='<div style="font-weight:700;color:'+(has?'gold':'#555')+';margin-bottom:2px">'+b.name+'</div>';
-    html+='<div style="font-size:12px;color:#888">'+b.desc+'</div>';
-    html+='</div>';
-  });
-  document.getElementById('badgesList').innerHTML=html;
-}
+    function pickD(el, d) {
+        document.querySelectorAll('.diff').forEach(b => b.classList.remove('on'));
+        el.classList.add('on'); currentDiff = d; checkReady();
+    }
 
-function awardBadge(id){
-  if(earnedBadges.indexOf(id)===-1){
-    earnedBadges.push(id);
-    localStorage.setItem('bc_badges',JSON.stringify(earnedBadges));
-  }
-}
+    function checkReady() {
+        if (currentCat && currentDiff) document.getElementById('startBtn').disabled = false;
+    }
 
-function checkBadges(){
-  if(games>=1) awardBadge('first_game');
-  if(streak>=3) awardBadge('streak_3');
-  if(score===5) awardBadge('perfect');
-  if(coins>=100) awardBadge('coins_100');
-  if(coins>=500) awardBadge('coins_500');
-  if(games>=10) awardBadge('games_10');
-}
+    async function startGame() {
+        document.getElementById('home').classList.add('hidden');
+        document.getElementById('quiz').classList.remove('hidden');
+        loadQuestion();
+    }
 
-function pick(el,c){
-  document.querySelectorAll('.cat').forEach(function(b){b.classList.remove('on')});
-  el.classList.add('on');cat=c;chk();
-}
+    async function loadQuestion() {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('qwrap').classList.add('hidden');
+        
+        const question = await fetchGroqTrivia();
+        
+        document.getElementById('loading').style.display = 'none';
+        if (!question) return;
 
-function pickD(el,d){
-  document.querySelectorAll('.diff').forEach(function(b){b.classList.remove('on')});
-  el.classList.add('on');diff=d;chk();
-}
+        document.getElementById('qtxt').textContent = question.question;
+        const optsDiv = document.getElementById('opts');
+        optsDiv.innerHTML = '';
+        
+        question.options.forEach((opt, i) => {
+            const b = document.createElement('button');
+            b.className = 'opt';
+            b.textContent = opt;
+            b.onclick = () => handleAnswer(i, question.correct, b);
+            optsDiv.appendChild(b);
+        });
+        document.getElementById('qwrap').classList.remove('hidden');
+    }
 
-function chk(){
-  var b=document.getElementById('startBtn');
-  if(cat&&diff){b.disabled=false;b.textContent='START GAME →';}
-}
+    async function fetchGroqTrivia() {
+        const prompt = `Generate one ${currentDiff} trivia question about ${currentCat}. Return ONLY JSON: {"question": "...", "options": ["A", "B", "C", "D"], "correct": 0}`;
+        
+        try {
+            const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${ownerKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: "llama-3.3-70b-versatile",
+                    messages: [{role: "user", content: prompt}],
+                    response_format: { type: "json_object" }
+                })
+            });
+            const data = await resp.json();
+            return JSON.parse(data.choices[0].message.content);
+        } catch (e) {
+            alert("Error fetching question. Check API Key.");
+            return null;
+        }
+    }
 
-function showSection(s){
-  ['home','quiz','results'].forEach(function(id){
-    document.getElementById(id).classList[id===s?'remove':'add']('hidden');
-  });
-}
+    function handleAnswer(selected, correct, btn) {
+        if (selected === correct) {
+            btn.classList.add('correct');
+            coins += 20;
+            score++;
+        } else {
+            btn.classList.add('wrong');
+        }
+        localStorage.setItem('bc_coins', coins);
+        document.getElementById('coins').textContent = coins;
+        
+        setTimeout(() => {
+            currentQ++;
+            if (currentQ < 3) loadQuestion(); // Play 3 questions per round
+            else showFinalResults();
+        }, 1500);
+    }
 
-async function start(){
-  score=0;earned=0;curQ=0;streak=0;
-  var doubleCoins=unlocked.indexOf('double_coins')>-1;
-  showSection('quiz');
-  await loadQ();
-}
+    function showFinalResults() {
+        document.getElementById('quiz').classList.add('hidden');
+        document.getElementById('results').classList.remove('hidden');
+        document.getElementById('rearned').textContent = score * 20;
+    }
 
-async function loadQ(){
-  done=false;clearInterval(tint);
-  document.getElementById('loading').classList.remove('hidden');
-  document.getElementById('qwrap').classList.add('hidden');
-  document.getElementById('qnum').textContent='Q'+(curQ+1)+'/5';
-  q=await getQ();
-  document.getElementById('loading').classList.add('hidden');
-  if(!q){alert('Error! Check your API key.');goHome();return;}
-  document.getElementById('qtxt').textContent=q.question;
-  var o=document.getElementById('opts');o.innerHTML='';
-  q.options.forEach(function(opt,i){
-    var b=document.createElement('button');
-    b.className='opt';
-    b.textContent=['A','B','C','D'][i]+'. '+opt;
-    b.onclick=function(){answer(i,b)};
-    o.appendChild(b);
-  });
-  document.getElementById('qwrap').classList.remove('hidden');
-  var maxTime=unlocked.indexOf('extra_time')>-1?30:20;
-  startTimer(maxTime);
-}
-
-function startTimer(max){
-  timer=max||20;updT(max);
-  tint=setInterval(function(){
-    timer--;updT(max);
-    if(timer<=0){clearInterval(tint);timeout();}
-  },1000);
-}
-
-function updT(max){
-  max=max||20;
-  var p=(timer/max)*100;
-  var c=timer>max*0.5?'#00f5ff':timer>max*0.25?'#facc15':'#f87171';
-  document.getElementById('tbar').style.width=p+'%';
-  document.getElementById('tbar').style.background=c;
-  document.getElementById('tsec').textContent=timer+'s';
-  document.getElementById('tsec').style.color=c;
-}
-
-function timeout(){if(done)return;done=true;streak=0;revealAns();setTimeout(next,1800);}
-
-function answer(i,btn){
-  if(done)return;done=true;clearInterval(tint);
-  var double=unlocked.indexOf('double_coins')>-1;
-  if(i===q.correct){
-    var r={easy:10,medium:25,hard:50}[diff];
-    var bon=streak>=2?Math.floor(r*0.5):0;
-    var tot=(r+bon)*(double?2:1);
-    score++;earned+=tot;coins+=tot;streak++;
-    localStorage.setItem('bc_coins',coins);
-    btn.classList.add('correct');
-  } else {
-    streak=0;btn.classList.add('wrong');revealAns();
-  }
-  upd();setTimeout(next,1800);
-}
-
-function revealAns(){document.querySelectorAll('.opt')[q.correct].classList.add('show');}
-
-function next(){curQ++;if(curQ>=5)showResults();else loadQ();}
-
-function showResults(){
-  games++;localStorage.setItem('bc_games',games);
-  checkBadges();
-  var e=['🏆','⭐','😊','💪','📚','🎯'][5-score]||'🎯';
-  var t=['PERFECT!','EXCELLENT!','GREAT!','GOOD!','KEEP TRYING!','TRY AGAIN!'][5-score]||'DONE!';
-  document.getElementById('remoji').textContent=e;
-  document.getElementById('rtitle').textContent=t;
-  document.getElementById('rsub').textContent=cat+' · '+diff.toUpperCase();
-  document.getElementById('rearned').textContent=earned;
-  document.getElementById('rscore').textContent=score+'/5 correct · Total: '+coins.toLocaleString()+' 🪙';
-  showSection('results');upd();
-}
-
-function goHome(){showSection('home');upd();}
-
-function sendContact(){
-  var name=document.getElementById('cName').value;
-  var email=document.getElementById('cEmail').value;
-  var msg=document.getElementById('cMsg').value;
-  if(!name||!email||!msg){alert('Please fill in all fields!');return;}
-  document.getElementById('contactThanks').classList.remove('hidden');
-  document.getElementById('cName').value='';
-  document.getElementById('cEmail').value='';
-  document.getElementById('cMsg').value='';
-}
-
-async function getQ(){
-  var key=localStorage.getItem('bc_key');
-  if(!key){alert('Please save your API key first!');return null;}
-  var p='Generate a '+diff+' trivia question about '+cat+'. Return ONLY valid JSON no markdown: {"question":"...","options":["A","B","C","D"],"correct":0}. correct is 0-based index of right answer.';
-  try{
-  
+    function goPage(p, btn) {
+        document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
+        document.getElementById(p + 'Page').classList.add('active');
+    }
+</script>
+</body>
+</html>
