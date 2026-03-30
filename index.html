@@ -9,264 +9,274 @@
 body{background:#0a0a1a;color:#fff;font-family:sans-serif;padding:16px;min-height:100vh}
 h1{text-align:center;color:#00f5ff;font-size:24px;margin-bottom:4px}
 .sub{text-align:center;color:#888;font-size:13px;margin-bottom:16px}
-.wallet{text-align:center;color:gold;font-size:18px;margin-bottom:16px}
+.wallet{text-align:center;color:gold;font-size:18px;margin-bottom:16px;font-weight:bold}
 .card{background:#111;border:1px solid #333;border-radius:12px;padding:16px;margin-bottom:12px}
-.card h3{color:#a855f7;font-size:13px;margin-bottom:8px}
-input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #444;background:#000;color:#fff;font-size:14px;margin-bottom:8px;font-family:sans-serif}
-button{width:100%;padding:12px;border-radius:8px;border:none;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:6px}
+.card h3{color:#a855f7;font-size:13px;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #444;background:#000;color:#fff;font-size:14px;margin-bottom:8px}
+button{width:100%;padding:12px;border-radius:8px;border:none;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:6px;transition:0.2s}
 .btn-main{background:linear-gradient(135deg,#7c3aed,#0891b2);color:#fff}
-.btn-green{background:#065f46;color:#4ade80;border:1px solid #4ade80}
-.btn-gray{background:#1a1a2e;color:#888;border:1px solid #333}
 .btn-gold{background:#78350f;color:gold;border:1px solid gold}
-.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.cat{padding:10px 4px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:center;font-size:12px}
-.cat.on{border-color:#a855f7;background:#2d1b69;color:#a855f7}
-.diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.diff{padding:10px 4px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:center;font-size:12px}
-.diff.on{border-color:#facc15;color:#facc15;background:#1a1500}
-.opt{width:100%;padding:12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:left;font-size:15px;margin-bottom:8px}
+.btn-disabled{background:#222 !important;color:#555 !important;border:1px solid #333 !important;cursor:not-allowed}
+.cats, .diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.cat, .diff{padding:10px 4px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:center;font-size:11px}
+.cat.on, .diff.on{border-color:#00f5ff;background:#001a2e;color:#00f5ff}
+.opt{width:100%;padding:12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;text-align:left;font-size:15px;margin-bottom:8px}
 .opt.correct{border-color:#4ade80;background:#052e16;color:#4ade80}
 .opt.wrong{border-color:#f87171;background:#2d0a0a;color:#f87171}
-.opt.show{border-color:#4ade80;color:#4ade80}
 .hidden{display:none !important}
-.nav{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px}
-.nav-btn{padding:8px 14px;border-radius:20px;border:1px solid #333;background:#111;color:#888;font-size:12px;cursor:pointer;white-space:nowrap;font-weight:600}
+.nav{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:8px}
+.nav-btn{padding:8px 14px;border-radius:20px;border:1px solid #333;background:#111;color:#888;font-size:12px;white-space:nowrap}
 .nav-btn.on{border-color:#00f5ff;color:#00f5ff;background:#001a2e}
-.shop-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;border:1px solid #333;background:#111;margin-bottom:8px}
-.about-text{color:#aaa;font-size:13px;line-height:1.7}
 .page{display:none}
 .page.active{display:block}
-#adminSetup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.98);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
+.shop-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;border:1px solid #222;background:#0a0a0a;margin-bottom:10px}
+.item-info b{display:block;font-size:14px;color:#eee}
+.item-info small{color:#666;font-size:11px}
+#adminSetup{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
 </style>
 </head>
 <body>
 
 <div id="adminSetup" class="hidden">
     <div class="card" style="width: 100%; max-width: 400px;">
-        <h3 style="color: #00f5ff;">🔑 OWNER SETUP</h3>
-        <p style="font-size: 12px; color: #888; margin-bottom: 12px;">Paste your Groq API Key to power the game. This is saved only in your browser storage.</p>
+        <h3>🔑 OWNER CONFIG</h3>
+        <p style="font-size:11px; color:#666; margin-bottom:10px">Paste your Groq API Key to start the engine.</p>
         <input type="text" id="ownerKeyInput" placeholder="gsk_xxxx...">
-        <button class="btn-main" onclick="saveOwnerKey()">ACTIVATE BRAINCOINS</button>
+        <button class="btn-main" onclick="saveKey()">ACTIVATE SYSTEM</button>
     </div>
 </div>
 
 <h1>🧠 BRAINCOINS</h1>
-<div class="sub">Answer questions · Earn coins · Unlock rewards</div>
-<div class="wallet">🪙 <span id="coins">0</span> coins</div>
+<div class="sub">Play · Earn · Unlock Rewards</div>
+<div class="wallet">🪙 <span id="coinText">0</span> coins</div>
 
 <div class="nav">
-  <button class="nav-btn on" onclick="goPage('home',this)">🎮 Play</button>
-  <button class="nav-btn" onclick="goPage('shop',this)">🛒 Shop</button>
-  <button class="nav-btn" onclick="goPage('badges',this)">🏆 Badges</button>
-  <button class="nav-btn" onclick="goPage('about',this)">ℹ️ About</button>
-  <button class="nav-btn" onclick="goPage('contact',this)">📧 Contact</button>
-  <button class="nav-btn" onclick="goPage('privacy',this)">🔒 Privacy</button>
+    <button class="nav-btn on" onclick="goPage('home',this)">🎮 Play</button>
+    <button class="nav-btn" onclick="goPage('shop',this)">🛒 Shop</button>
+    <button class="nav-btn" onclick="goPage('about',this)">ℹ️ About</button>
+    <button class="nav-btn" onclick="goPage('contact',this)">📧 Help</button>
 </div>
 
 <div id="homePage" class="page active">
-  <div id="home">
-    <div class="card">
-      <h3>PICK CATEGORY</h3>
-      <div class="cats">
-        <div class="cat" onclick="pick(this,'Science')">🔬 Science</div>
-        <div class="cat" onclick="pick(this,'History')">📜 History</div>
-        <div class="cat" onclick="pick(this,'Pop Culture')">🎬 Pop Culture</div>
-        <div class="cat" onclick="pick(this,'Geography')">🌍 Geography</div>
-        <div class="cat" onclick="pick(this,'Sports')">⚽ Sports</div>
-        <div class="cat" onclick="pick(this,'Technology')">💻 Technology</div>
-        <div class="cat" onclick="pick(this,'Africa & Ghana')" id="africaCat">🌍 Africa</div>
-      </div>
-      <h3>PICK DIFFICULTY</h3>
-      <div class="diffs">
-        <div class="diff" onclick="pickD(this,'easy')">EASY +10🪙</div>
-        <div class="diff" onclick="pickD(this,'medium')">MED +25🪙</div>
-        <div class="diff" onclick="pickD(this,'hard')">HARD +50🪙</div>
-      </div>
-      <button class="btn-main" id="startBtn" onclick="startGame()" disabled>SELECT ABOVE</button>
+    <div id="home">
+        <div class="card">
+            <h3>SELECT TOPIC</h3>
+            <div class="cats">
+                <div class="cat" onclick="pickC(this,'Science')">🔬 Science</div>
+                <div class="cat" onclick="pickC(this,'History')">📜 History</div>
+                <div class="cat" onclick="pickC(this,'Africa & Ghana')">🌍 Africa</div>
+                <div class="cat" onclick="pickC(this,'Tech')">💻 Tech</div>
+            </div>
+            <h3>DIFFICULTY</h3>
+            <div class="diffs">
+                <div class="diff" onclick="pickD(this,'easy')">EASY</div>
+                <div class="diff" onclick="pickD(this,'medium')">MED</div>
+                <div class="diff" onclick="pickD(this,'hard')">HARD</div>
+            </div>
+            <button class="btn-main" id="startBtn" onclick="startGame()" disabled>CHOOSE SETTINGS</button>
+        </div>
     </div>
-  </div>
-  <div id="quiz" class="hidden">
-    <div id="loading" style="text-align:center;padding:40px;color:#888">Generating question...</div>
-    <div id="qwrap" class="hidden">
-      <div class="card"><p id="qtxt" style="font-size:17px;line-height:1.5"></p></div>
-      <div id="opts"></div>
+
+    <div id="quiz" class="hidden">
+        <div id="loading" style="text-align:center;padding:40px;color:#888">AI is crafting a question...</div>
+        <div id="qwrap" class="hidden">
+            <div class="card"><p id="qtxt" style="font-size:18px;"></p></div>
+            <div id="opts"></div>
+        </div>
     </div>
-  </div>
-  <div id="results" class="hidden">
-    <div class="card" style="text-align:center">
-      <h2 id="rtitle">GREAT!</h2>
-      <div style="color:#888;font-size:12px;margin-top:10px">COINS EARNED</div>
-      <div style="font-size:40px;color:gold;font-weight:bold;margin:10px 0">🪙 <span id="rearned">0</span></div>
-      <button class="btn-main" onclick="location.reload()">PLAY AGAIN</button>
+
+    <div id="results" class="hidden">
+        <div class="card" style="text-align:center">
+            <h2 id="resTitle">ROUND OVER</h2>
+            <div style="font-size:40px; margin: 15px 0; color:gold">🪙 <span id="rearned">0</span></div>
+            <button class="btn-main" onclick="location.reload()">PLAY AGAIN</button>
+        </div>
     </div>
-  </div>
 </div>
 
 <div id="shopPage" class="page">
-  <div class="card">
-    <h3>🛒 COIN SHOP</h3>
-    <div id="shopItems"></div>
-  </div>
-</div>
-
-<div id="badgesPage" class="page">
-  <div class="card">
-    <h3>🏆 YOUR BADGES</h3>
-    <div id="badgesList"></div>
-  </div>
+    <div class="card">
+        <h3>🎒 YOUR INVENTORY</h3>
+        <div style="font-size:13px; color:#888" id="inventoryText">Hints: 0 | Mystery Chests: 0</div>
+    </div>
+    <div class="card">
+        <h3>🛒 COIN SHOP</h3>
+        <div id="shopContainer"></div>
+    </div>
 </div>
 
 <div id="aboutPage" class="page">
-  <div class="card">
-    <div class="about-text">
-      <h4>About BrainCoins</h4>
-      <p>BrainCoins is a free play-to-earn trivia game created by Vincentia Nartey, an entrepreneur from Ghana building fun and educational tools for everyone.</p>
-      <h4>Our Mission</h4>
-      <p>We believe learning should be fun and rewarding. BrainCoins makes trivia exciting by giving players something to earn.</p>
+    <div class="card">
+        <h3>ABOUT BRAINCOINS</h3>
+        <p style="font-size:13px; color:#aaa; line-height:1.6">Created by Vincentia Nartey. A fun way to test your knowledge and earn digital coins. Built for the curious minds of Ghana and beyond.</p>
     </div>
-  </div>
 </div>
 
 <div id="contactPage" class="page">
-  <div class="card">
-    <h3>📧 CONTACT US</h3>
-    <input type="text" placeholder="Your Name" id="cName">
-    <textarea rows="4" placeholder="Your message..." id="cMsg"></textarea>
-    <button class="btn-main" onclick="alert('Message sent!')">SEND MESSAGE</button>
-  </div>
-</div>
-
-<div id="privacyPage" class="page">
-  <div class="card">
-    <div class="about-text">
-      <h4>Privacy Policy</h4>
-      <p>Last updated: March 2026. BrainCoins stores your coin balance and progress locally on your device only.</p>
+    <div class="card">
+        <h3>📧 SUPPORT</h3>
+        <input type="text" placeholder="Subject">
+        <textarea rows="4" placeholder="How can we help?"></textarea>
+        <button class="btn-main" onclick="alert('Message Sent!')">SEND MESSAGE</button>
     </div>
-  </div>
 </div>
 
 <script>
-var coins = +localStorage.getItem('bc_coins')||0;
-var ownerKey = localStorage.getItem('bc_owner_key')||"";
-var cat=null, diff=null, score=0, earned=0;
+// --- GAME DATA ---
+let coins = parseInt(localStorage.getItem('bc_coins')) || 0;
+let ownerKey = localStorage.getItem('bc_owner_key') || "";
+let inventory = JSON.parse(localStorage.getItem('bc_inv')) || { hints: 0, chests: 0 };
+let unlocks = JSON.parse(localStorage.getItem('bc_unlocks')) || [];
 
-var SHOP=[
-  {id:'africa',name:'🌍 Africa & Ghana Category',desc:'Unlock African trivia',price:100},
-  {id:'theme_gold',name:'✨ Gold Theme',desc:'Unlock golden coin theme',price:150}
+let currentCat = null, currentDiff = null;
+
+const SHOP_ITEMS = [
+    { id: 'hint', name: '🔍 50/50 Power-up', desc: 'Remove 2 wrong answers', price: 50, multi: true },
+    { id: 'chest', name: '🎁 Mystery Chest', desc: 'Random prize (5-200 coins)', price: 75, multi: true },
+    { id: 'gold_theme', name: '✨ Gold Theme', desc: 'Prestige gold interface', price: 200, multi: false }
 ];
 
-window.onload = function() {
-    if(!ownerKey || ownerKey.length < 15) {
-        document.getElementById('adminSetup').classList.remove('hidden');
-    } else {
-        document.getElementById('adminSetup').classList.add('hidden');
-    }
-    document.getElementById('coins').textContent = coins.toLocaleString();
+// --- INITIALIZE ---
+window.onload = () => {
+    if (!ownerKey) document.getElementById('adminSetup').classList.remove('hidden');
+    updateUI();
 };
 
-function saveOwnerKey() {
-    var val = document.getElementById('ownerKeyInput').value.trim();
-    if(val.length > 15) {
+function updateUI() {
+    document.getElementById('coinText').textContent = coins.toLocaleString();
+    document.getElementById('inventoryText').textContent = `Hints: ${inventory.hints} | Chests: ${inventory.chests}`;
+    if(window.activePage === 'shop') renderShop();
+}
+
+function saveKey() {
+    const val = document.getElementById('ownerKeyInput').value.trim();
+    if (val.length > 20) {
         localStorage.setItem('bc_owner_key', val);
         ownerKey = val;
-        document.getElementById('adminSetup').style.display = 'none';
         document.getElementById('adminSetup').classList.add('hidden');
-    } else {
-        alert("Please paste a valid key.");
     }
 }
 
-function goPage(page,btn){
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
-  document.getElementById(page+'Page').classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('on')});
-  if(btn) btn.classList.add('on');
-  if(page==='shop') renderShop();
+// --- NAVIGATION ---
+function goPage(p, btn) {
+    window.activePage = p;
+    document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
+    document.getElementById(p + 'Page').classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
+    if(btn) btn.classList.add('on');
+    updateUI();
 }
 
-function renderShop(){
-  var html='';
-  SHOP.forEach(function(item){
-    html+='<div class="shop-item"><div><b>'+item.name+'</b><br><small>'+item.desc+'</small></div><button class="btn-gold" style="width:auto">'+item.price+' 🪙</button></div>';
-  });
-  document.getElementById('shopItems').innerHTML=html;
+// --- SHOP LOGIC ---
+function renderShop() {
+    let html = '';
+    SHOP_ITEMS.forEach(item => {
+        const isBought = !item.multi && unlocks.includes(item.id);
+        const canAfford = coins >= item.price;
+        
+        html += `
+        <div class="shop-item">
+            <div class="item-info">
+                <b>${item.name}</b>
+                <small>${item.desc}</small>
+            </div>
+            <button class="${isBought ? 'btn-disabled' : 'btn-gold'} ${(!canAfford && !isBought) ? 'btn-disabled' : ''}" 
+                    style="width:auto; padding:8px 15px" 
+                    onclick="buyItem('${item.id}', ${item.price}, ${item.multi})">
+                ${isBought ? 'OWNED' : item.price + ' 🪙'}
+            </button>
+        </div>`;
+    });
+    document.getElementById('shopContainer').innerHTML = html;
 }
 
-function pick(el,c){
-  document.querySelectorAll('.cat').forEach(function(b){b.classList.remove('on')});
-  el.classList.add('on'); cat=c; chk();
+function buyItem(id, price, isMulti) {
+    if (!isMulti && unlocks.includes(id)) return;
+    if (coins < price) {
+        alert("Not enough coins! Play more trivia.");
+        return;
+    }
+
+    coins -= price;
+    
+    if (id === 'hint') inventory.hints++;
+    if (id === 'chest') {
+        const win = Math.floor(Math.random() * 195) + 5;
+        coins += win;
+        alert(`Chest opened! You won ${win} coins!`);
+    }
+    if (!isMulti) unlocks.push(id);
+
+    localStorage.setItem('bc_coins', coins);
+    localStorage.setItem('bc_inv', JSON.stringify(inventory));
+    localStorage.setItem('bc_unlocks', JSON.stringify(unlocks));
+    updateUI();
 }
 
-function pickD(el,d){
-  document.querySelectorAll('.diff').forEach(function(b){b.classList.remove('on')});
-  el.classList.add('on'); diff=d; chk();
+// --- TRIVIA LOGIC ---
+function pickC(el, c) {
+    document.querySelectorAll('.cat').forEach(b => b.classList.remove('on'));
+    el.classList.add('on'); currentCat = c; checkReady();
+}
+function pickD(el, d) {
+    document.querySelectorAll('.diff').forEach(b => b.classList.remove('on'));
+    el.classList.add('on'); currentDiff = d; checkReady();
+}
+function checkReady() {
+    if (currentCat && currentDiff) {
+        const b = document.getElementById('startBtn');
+        b.disabled = false; b.textContent = "START GAME";
+    }
 }
 
-function chk(){
-  if(cat&&diff){
-    var b=document.getElementById('startBtn');
-    b.disabled=false; b.textContent='START GAME →';
-  }
-}
-
-async function startGame(){
-  document.getElementById('home').classList.add('hidden');
-  document.getElementById('quiz').classList.remove('hidden');
-  loadQ();
-}
-
-async function loadQ(){
-  document.getElementById('loading').style.display = 'block';
-  document.getElementById('qwrap').classList.add('hidden');
-  var q = await fetchTrivia();
-  document.getElementById('loading').style.display = 'none';
-  if(!q) return;
-
-  document.getElementById('qtxt').textContent = q.question;
-  var o=document.getElementById('opts'); o.innerHTML='';
-  q.options.forEach(function(opt,i){
-    var b=document.createElement('button');
-    b.className='opt';
-    b.textContent = opt;
-    b.onclick = function(){ handleAns(i, q.correct, b); };
-    o.appendChild(b);
-  });
-  document.getElementById('qwrap').classList.remove('hidden');
-}
-
-async function fetchTrivia() {
+async function startGame() {
+    document.getElementById('home').classList.add('hidden');
+    document.getElementById('quiz').classList.remove('hidden');
+    
     try {
-        var resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
-            headers: {'Authorization': 'Bearer '+ownerKey, 'Content-Type': 'application/json'},
+            headers: {'Authorization': `Bearer ${ownerKey}`, 'Content-Type': 'application/json'},
             body: JSON.stringify({
                 model: "llama-3.3-70b-versatile",
-                messages: [{role: "user", content: "JSON ONLY: {\"question\":\"...\",\"options\":[\"A\",\"B\",\"C\",\"D\"],\"correct\":0} for a "+diff+" question about "+cat+"."}],
+                messages: [{role: "user", content: `Return JSON: {"question":"...","options":["A","B","C","D"],"correct":0} for a ${currentDiff} trivia about ${currentCat}.`}],
                 response_format: { type: "json_object" }
             })
         });
-        var data = await resp.json();
-        return JSON.parse(data.choices[0].message.content);
-    } catch (e) { alert("API Error."); return null; }
+        const data = await resp.json();
+        const q = JSON.parse(data.choices[0].message.content);
+        showQ(q);
+    } catch (e) { alert("Error connecting to AI."); location.reload(); }
 }
 
-function handleAns(sel, cor, btn) {
-    if (sel === cor) {
-        btn.classList.add('correct');
-        var reward = {easy:10, medium:25, hard:50}[diff];
-        coins += reward; earned = reward;
-    } else {
-        btn.classList.add('wrong');
-        document.querySelectorAll('.opt')[cor].classList.add('correct');
-        earned = 0;
-    }
-    localStorage.setItem('bc_coins', coins);
-    document.getElementById('coins').textContent = coins.toLocaleString();
-    setTimeout(function(){
-        document.getElementById('quiz').classList.add('hidden');
-        document.getElementById('results').classList.remove('hidden');
-        document.getElementById('rearned').textContent = earned;
-    }, 2000);
+function showQ(q) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('qtxt').textContent = q.question;
+    const o = document.getElementById('opts'); o.innerHTML = '';
+    
+    q.options.forEach((opt, i) => {
+        const b = document.createElement('button');
+        b.className = 'opt';
+        b.textContent = opt;
+        b.onclick = () => {
+            const reward = {easy:10, medium:25, hard:50}[currentDiff];
+            if(i === q.correct) {
+                b.classList.add('correct');
+                coins += reward;
+                document.getElementById('rearned').textContent = reward;
+            } else {
+                b.classList.add('wrong');
+                document.getElementById('rearned').textContent = 0;
+            }
+            localStorage.setItem('bc_coins', coins);
+            setTimeout(() => {
+                document.getElementById('quiz').classList.add('hidden');
+                document.getElementById('results').classList.remove('hidden');
+            }, 1500);
+        };
+        o.appendChild(b);
+    });
+    document.getElementById('qwrap').classList.remove('hidden');
 }
 </script>
 </body>
