@@ -5,94 +5,68 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BrainCoins - Centia</title>
 <style>
-/* --- BASE STYLES --- */
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a1a;color:#fff;font-family:sans-serif;min-height:100vh;overflow:hidden}
+:root { --neon: #00f5ff; --purple: #a855f7; --bg: #050510; --gold: #ffd700; }
+*{margin:0;padding:0;box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+body{background: var(--bg); color:#fff; font-family:'Segoe UI',Roboto,sans-serif; min-height:100vh; overflow:hidden}
 
-/* --- BACKGROUND ANIMATION --- */
-#canvas-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    pointer-events: none;
+@keyframes titleGlow { 0%{color:var(--neon); text-shadow:0 0 10px var(--neon)} 50%{color:var(--purple); text-shadow:0 0 20px var(--purple)} 100%{color:var(--neon); text-shadow:0 0 10px var(--neon)} }
+
+#canvas-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+header { padding: 25px 20px 10px; text-align: center; }
+h1 { font-size: 28px; letter-spacing: 3px; animation: titleGlow 4s infinite; text-transform: uppercase; font-weight: 900; }
+.wallet { 
+    background: rgba(255, 215, 0, 0.1); border: 1px solid var(--gold); color: var(--gold); 
+    padding: 8px 22px; border-radius: 50px; display: inline-block; margin-top: 10px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); font-weight: bold; font-size: 18px;
 }
 
-/* --- HEADER & WALLET --- */
-header { padding: 16px 16px 0; text-align: center; }
-h1{color:#00f5ff;font-size:24px;margin-bottom:4px;text-shadow: 0 0 15px rgba(0,245,255,0.3)}
-.wallet{color:gold;font-size:16px;font-weight:bold;background: rgba(255,215,0,0.1); width: fit-content; margin: 8px auto; padding: 6px 16px; border-radius: 50px; border: 1px solid rgba(255,215,0,0.3)}
-
-/* --- SLIDING NAVIGATION --- */
+/* --- NAVIGATION --- */
 .nav-container {
-    position: relative;
-    display: flex;
-    justify-content: space-around;
-    padding: 10px 0;
-    border-bottom: 1px solid #222;
-    background: rgba(10,10,26,0.9);
+    position: relative; display: flex; background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.1); margin-top: 15px;
 }
 .nav-btn {
-    background: none;
-    border: none;
-    color: #666;
-    font-size: 13px;
-    font-weight: bold;
-    padding: 10px;
-    cursor: pointer;
-    transition: 0.3s;
-    width: 25%;
+    flex: 1; background: none; border: none; color: #666; padding: 18px 0;
+    font-size: 11px; font-weight: 800; letter-spacing: 1.5px; cursor: pointer; transition: 0.3s; z-index: 2;
 }
-.nav-btn.active { color: #00f5ff; }
-
-/* The Moving Indicator Line */
+.nav-btn.active { color: var(--neon); }
 #nav-indicator {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    width: 25%;
-    background: #00f5ff;
-    box-shadow: 0 0 10px #00f5ff;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: absolute; bottom: 0; left: 0; height: 3px; width: 25%;
+    background: var(--neon); box-shadow: 0 0 15px var(--neon);
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-/* --- SLIDESHOW VIEWPORT --- */
-.viewport {
-    width: 100%;
-    height: calc(100vh - 160px); /* Adjust based on header/nav height */
-    overflow: hidden;
+/* --- VIEWPORT --- */
+.viewport { width: 100%; height: calc(100vh - 180px); overflow: hidden; }
+.slides-container { display: flex; width: 400%; height: 100%; transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1); }
+.slide { width: 25%; height: 100%; padding: 20px; overflow-y: auto; padding-bottom: 80px; }
+
+/* --- CARDS & BUTTONS --- */
+.card {
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px; padding: 20px; margin-bottom: 15px; backdrop-filter: blur(12px);
 }
-.slides-container {
-    display: flex;
-    width: 400%; /* 4 pages = 400% */
-    height: 100%;
-    transition: transform 0.5s ease-in-out;
+.card h3 { font-size: 10px; color: var(--purple); letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase;}
+
+.action-btn {
+    width: 100%; padding: 16px; border-radius: 14px; border: none;
+    font-weight: 900; font-size: 14px; cursor: pointer; transition: 0.2s;
+    margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;
 }
-.slide {
-    width: 25%; /* Each slide is 1/4 of container */
-    height: 100%;
-    padding: 20px;
-    overflow-y: auto;
+.btn-main { background: linear-gradient(90deg, #7c3aed, #0891b2); color: #fff; box-shadow: 0 4px 20px rgba(124,58,237,0.4); }
+.btn-main:active { transform: scale(0.96); opacity: 0.9; }
+.btn-outline { background: rgba(255,255,255,0.03); border: 1px solid #333; color: #fff; text-align: left; }
+
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+.item { 
+    padding: 15px 5px; background: rgba(0,0,0,0.4); border: 1px solid #222; 
+    border-radius: 14px; text-align: center; font-size: 11px; transition: 0.3s;
 }
+.item.on { border-color: var(--neon); background: rgba(0, 245, 255, 0.15); color: var(--neon); box-shadow: 0 0 15px rgba(0, 245, 255, 0.2); }
 
-/* --- UI CARDS --- */
-.card{background:rgba(17,17,26,0.8); border:1px solid #333; border-radius:16px; padding:16px; margin-bottom:12px; backdrop-filter: blur(5px)}
-.card h3{color:#a855f7;font-size:11px;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
-
-input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #444;background:#000;color:#fff;font-size:14px;margin-bottom:10px}
-button.action-btn{width:100%;padding:14px;border-radius:10px;border:none;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:8px;transition:0.3s}
-.btn-main{background:linear-gradient(135deg,#7c3aed,#0891b2);color:#fff}
-.btn-gold{background:#78350f;color:gold;border:1px solid gold}
-
-.cats, .diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.cat, .diff{padding:12px 4px;border-radius:10px;border:1px solid #333;background:rgba(20,20,30,0.6);color:#fff;text-align:center;font-size:11px}
-.cat.on, .diff.on{border-color:#00f5ff;background:rgba(0,245,255,0.1);color:#00f5ff}
-
-.hidden{display:none !important}
-#adminSetup{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a1a;z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
+.hidden { display: none !important; }
+#adminSetup { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 30px; }
 </style>
 </head>
 <body>
@@ -101,87 +75,83 @@ button.action-btn{width:100%;padding:14px;border-radius:10px;border:none;font-si
 
 <div id="adminSetup" class="hidden">
     <div class="card" style="width: 100%; max-width: 400px;">
-        <h3>🔑 ACTIVATE SYSTEM</h3>
-        <input type="text" id="ownerKeyInput" placeholder="Enter Groq Key...">
-        <button class="action-btn btn-main" onclick="saveKey()">START ENGINE</button>
+        <h3 style="text-align:center">Secure Link Required</h3>
+        <p style="font-size:12px; color:#888; margin-bottom:15px; text-align:center">Enter your Groq Key to initialize the AI trivia core.</p>
+        <input type="text" id="keyInput" placeholder="gsk_..." style="width:100%; padding:15px; background:#000; border:1px solid #333; color:#fff; border-radius:12px; margin-bottom:15px;">
+        <button class="action-btn btn-main" onclick="auth()">Authorize Engine</button>
     </div>
 </div>
 
 <header>
-    <h1>BRAINCOINS</h1>
-    <div class="wallet">🪙 <span id="coinText">0</span></div>
+    <h1>BrainCoins</h1>
+    <div class="wallet">🪙 <span id="coinDisp">0</span></div>
 </header>
 
 <div class="nav-container">
-    <button class="nav-btn active" onclick="slideTo(0)">PLAY</button>
-    <button class="nav-btn" onclick="slideTo(1)">SHOP</button>
-    <button class="nav-btn" onclick="slideTo(2)">ABOUT</button>
-    <button class="nav-btn" onclick="slideTo(3)">HELP</button>
+    <button class="nav-btn active" onclick="move(0)">PLAY</button>
+    <button class="nav-btn" onclick="move(1)">SHOP</button>
+    <button class="nav-btn" onclick="move(2)">ABOUT</button>
+    <button class="nav-btn" onclick="move(3)">HELP</button>
     <div id="nav-indicator"></div>
 </div>
 
 <div class="viewport">
-    <div class="slides-container" id="mainSlides">
+    <div class="slides-container" id="slider">
         
         <div class="slide">
-            <div id="gameHome">
+            <div id="lobby">
                 <div class="card">
-                    <h3>CHOOSE CATEGORY</h3>
-                    <div class="cats">
-                        <div class="cat" onclick="pickC(this,'Science')">🔬 Science</div>
-                        <div class="cat" onclick="pickC(this,'History')">📜 History</div>
-                        <div class="cat" onclick="pickC(this,'Pop Culture')">🎬 Pop</div>
-                        <div class="cat" onclick="pickC(this,'Tech')">💻 Tech</div>
-                        <div class="cat" onclick="pickC(this,'Geography')">🌍 Earth</div>
-                        <div class="cat" onclick="pickC(this,'General')">💡 Misc</div>
+                    <h3>Domain</h3>
+                    <div class="grid">
+                        <div class="item" onclick="setCat(this,'Science')">🔬 Science</div>
+                        <div class="item" onclick="setCat(this,'History')">📜 History</div>
+                        <div class="item" onclick="setCat(this,'Africa')">🌍 Africa</div>
+                        <div class="item" onclick="setCat(this,'Geography')">🗺️ Geog</div>
+                        <div class="item" onclick="setCat(this,'Pop Culture')">🎬 Pop</div>
+                        <div class="item" onclick="setCat(this,'Tech')">💻 Tech</div>
                     </div>
-                    <h3>DIFFICULTY</h3>
-                    <div class="diffs">
-                        <div class="diff" onclick="pickD(this,'easy')">EASY</div>
-                        <div class="diff" onclick="pickD(this,'medium')">MED</div>
-                        <div class="diff" onclick="pickD(this,'hard')">HARD</div>
+                    <h3>Difficulty</h3>
+                    <div class="grid">
+                        <div class="item" onclick="setDiff(this,'easy')">Easy</div>
+                        <div class="item" onclick="setDiff(this,'medium')">Pro</div>
+                        <div class="item" onclick="setDiff(this,'hard')">Elite</div>
                     </div>
-                    <button class="action-btn btn-main" id="startBtn" onclick="startGame()" disabled>SELECT OPTIONS</button>
+                    <button class="action-btn btn-main" id="startBtn" onclick="initGame()" disabled>Ready to Play</button>
                 </div>
             </div>
-            <div id="quizArea" class="hidden">
-                <div id="loading">Crafting question...</div>
-                <div id="qContent" class="hidden">
-                    <div class="card"><p id="qText" style="font-size:18px"></p></div>
-                    <div id="optionsGrid"></div>
-                </div>
-            </div>
-            <div id="resultArea" class="hidden">
-                <div class="card" style="text-align:center">
-                    <h2>FINISH!</h2>
-                    <div style="font-size:40px; margin:20px 0; color:gold">🪙 <span id="winAmount">0</span></div>
-                    <button class="action-btn btn-main" onclick="location.reload()">PLAY AGAIN</button>
+            <div id="gameplay" class="hidden">
+                <div id="loader" style="text-align:center; padding:60px; color:var(--neon); font-weight:bold">INITIALIZING NEURAL LINK...</div>
+                <div id="quizDisplay" class="hidden">
+                    <div class="card"><p id="qTxt" style="font-size:18px; line-height:1.4"></p></div>
+                    <div id="ansGrid"></div>
                 </div>
             </div>
         </div>
 
         <div class="slide">
             <div class="card">
-                <h3>YOUR ITEMS</h3>
-                <div id="invText" style="color:#888; font-size:13px">Hints: 0 | Chests: 0</div>
+                <h3>Vault Inventory</h3>
+                <div id="invDisp" style="font-size:13px; color:#888">Hints: 0 | Chests: 0</div>
             </div>
-            <div id="shopList"></div>
+            <div id="shopContent"></div>
         </div>
 
         <div class="slide">
             <div class="card">
-                <h3>DEVELOPER</h3>
-                <p style="font-size:15px; margin-bottom:10px"><b>Centia</b></p>
-                <p style="color:#aaa; font-size:13px; line-height:1.5">A global trivia platform where knowledge turns into coins. Built for the curious.</p>
+                <h3>Developer Profile</h3>
+                <p style="font-size:20px; color:var(--neon); font-weight:bold">Centia</p>
+                <div style="height:1px; background:rgba(255,255,255,0.1); margin:15px 0"></div>
+                <p style="color:#aaa; line-height:1.7; font-size:14px">BrainCoins is a premium trivia ecosystem where knowledge creates value. Automated by AI, owned by the curious.</p>
             </div>
         </div>
 
         <div class="slide">
             <div class="card">
-                <h3>📧 CONTACT</h3>
-                <input type="text" id="mailSub" placeholder="Subject">
-                <textarea id="mailBody" rows="4" placeholder="How can we help?"></textarea>
-                <button class="action-btn btn-main" onclick="sendMail()">SEND TO CENTIA</button>
+                <h3>Direct Support</h3>
+                <p style="font-size:12px; color:#666; margin-bottom:15px">A message will be sent to narteyvincentia8@gmail.com</p>
+                <input type="text" id="hSub" placeholder="Issue Title" style="width:100%; padding:14px; background:#000; border:1px solid #333; color:#fff; border-radius:12px; margin-bottom:10px">
+                <textarea id="hBody" rows="5" placeholder="Details..." style="width:100%; padding:14px; background:#000; border:1px solid #333; color:#fff; border-radius:12px; margin-bottom:15px"></textarea>
+                <button class="action-btn btn-main" onclick="contact()">Transmit Message</button>
             </div>
         </div>
 
@@ -189,146 +159,122 @@ button.action-btn{width:100%;padding:14px;border-radius:10px;border:none;font-si
 </div>
 
 <script>
-// --- SLIDER LOGIC ---
-function slideTo(index) {
-    const container = document.getElementById('mainSlides');
-    const indicator = document.getElementById('nav-indicator');
-    const buttons = document.querySelectorAll('.nav-btn');
-
-    // Move the slides
-    container.style.transform = `translateX(-${index * 25}%)`;
-    
-    // Move the indicator line
-    indicator.style.transform = `translateX(${index * 100}%)`;
-
-    // Update button colors
-    buttons.forEach((btn, i) => {
-        if(i === index) btn.classList.add('active');
-        else btn.classList.remove('active');
-    });
-}
-
-// --- BACKGROUND ANIMATION ---
-const canvas = document.getElementById('canvas-bg');
-const ctx = canvas.getContext('2d');
-let particles = [];
-function initP() {
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    particles = [];
-    for(let i=0; i<30; i++) particles.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, s:Math.random()*2, dx:Math.random()-0.5, dy:Math.random()-0.5});
-}
-function animP() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    particles.forEach(p => {
-        p.x+=p.dx; p.y+=p.dy;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2);
-        ctx.fillStyle = "rgba(0,245,255,0.3)"; ctx.fill();
-    });
-    requestAnimationFrame(animP);
-}
-initP(); animP();
-
-// --- GAME CORE ---
 let coins = parseInt(localStorage.getItem('bc_coins')) || 0;
 let key = localStorage.getItem('bc_key') || "";
-let inv = JSON.parse(localStorage.getItem('bc_inv')) || { hints: 0, chests: 0 };
-let currentCat, currentDiff;
+let inv = JSON.parse(localStorage.getItem('bc_inv')) || { h:0, c:0 };
+let selC, selD;
 
-function saveKey() {
-    const v = document.getElementById('ownerKeyInput').value.trim();
-    if(v.length > 20) { localStorage.setItem('bc_key', v); key=v; document.getElementById('adminSetup').classList.add('hidden'); }
+function move(i) {
+    document.getElementById('slider').style.transform = `translateX(-${i*25}%)`;
+    document.getElementById('nav-indicator').style.transform = `translateX(${i*100}%)`;
+    document.querySelectorAll('.nav-btn').forEach((b,idx)=>idx===i?b.classList.add('active'):b.classList.remove('active'));
+}
+
+const c = document.getElementById('canvas-bg');
+const ctx = c.getContext('2d');
+let pts = [];
+function initBG() {
+    c.width = window.innerWidth; c.height = window.innerHeight;
+    pts = []; for(let i=0; i<35; i++) pts.push({x:Math.random()*c.width, y:Math.random()*c.height, r:Math.random()*1.5, s:Math.random()*0.4});
+}
+function drawBG() {
+    ctx.clearRect(0,0,c.width,c.height);
+    pts.forEach(p=>{
+        p.y -= p.s; if(p.y<0) p.y=c.height;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = "rgba(0, 245, 255, 0.2)"; ctx.fill();
+    });
+    requestAnimationFrame(drawBG);
+}
+initBG(); drawBG();
+
+function setCat(el,v){ document.querySelectorAll('.item').forEach(x=>x.classList.remove('on')); el.classList.add('on'); selC=v; check(); }
+function setDiff(el,v){ el.parentNode.querySelectorAll('.item').forEach(x=>x.classList.remove('on')); el.classList.add('on'); selD=v; check(); }
+function check(){ if(selC && selD){ const b=document.getElementById('startBtn'); b.disabled=false; b.innerText="Start Mission"; }}
+
+function auth(){ 
+    const v = document.getElementById('keyInput').value.trim(); 
+    if(v.length > 20){ localStorage.setItem('bc_key',v); key=v; document.getElementById('adminSetup').classList.add('hidden'); }
 }
 
 window.onload = () => {
     if(!key) document.getElementById('adminSetup').classList.remove('hidden');
-    updateUI();
-    renderShop();
+    document.getElementById('coinDisp').innerText = coins.toLocaleString();
+    renderStore();
 };
 
-function updateUI() {
-    document.getElementById('coinText').textContent = coins.toLocaleString();
-    document.getElementById('invText').textContent = `Hints: ${inv.hints} | Chests: ${inv.chests}`;
-}
-
-function sendMail() {
-    const s = document.getElementById('mailSub').value;
-    const b = document.getElementById('mailBody').value;
-    window.location.href = `mailto:narteyvincentia8@gmail.com?subject=${encodeURIComponent(s)}&body=${encodeURIComponent(b)}`;
-}
-
-// --- TRIVIA LOGIC ---
-function pickC(el, c) { document.querySelectorAll('.cat').forEach(x=>x.classList.remove('on')); el.classList.add('on'); currentCat=c; checkR(); }
-function pickD(el, d) { document.querySelectorAll('.diff').forEach(x=>x.classList.remove('on')); el.classList.add('on'); currentDiff=d; checkR(); }
-function checkR() { if(currentCat && currentDiff) { const b=document.getElementById('startBtn'); b.disabled=false; b.textContent="START GAME"; } }
-
-async function startGame() {
-    document.getElementById('gameHome').classList.add('hidden');
-    document.getElementById('quizArea').classList.remove('hidden');
+async function initGame(){
+    document.getElementById('lobby').classList.add('hidden');
+    document.getElementById('gameplay').classList.remove('hidden');
     try {
-        const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                model: "llama-3.3-70b-versatile",
-                messages: [{role: "user", content: `JSON: {"question":"...","options":["A","B","C","D"],"correct":0} for ${currentDiff} ${currentCat} trivia.`}],
-                response_format: {type: "json_object"}
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+            method:'POST',
+            headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
+            body:JSON.stringify({
+                model:"llama-3.3-70b-versatile",
+                messages:[{role:"user",content:`JSON ONLY: {"q":"...","a":["...","...","...","..."],"c":0} for ${selD} ${selC} trivia.`}],
+                response_format:{type:"json_object"}
             })
         });
-        const data = await r.json();
-        const q = JSON.parse(data.choices[0].message.content);
-        showQ(q);
-    } catch(e) { alert("API Error"); location.reload(); }
+        const d = await res.json();
+        const q = JSON.parse(d.choices[0].message.content);
+        runQuiz(q);
+    } catch(e){ alert("Connection Lost."); location.reload(); }
 }
 
-function showQ(q) {
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('qText').textContent = q.question;
-    const g = document.getElementById('optionsGrid'); g.innerHTML = '';
-    q.options.forEach((opt, i) => {
+function runQuiz(q){
+    document.getElementById('loader').classList.add('hidden');
+    document.getElementById('qTxt').innerText = q.q;
+    const g = document.getElementById('ansGrid'); g.innerHTML = '';
+    q.a.forEach((a,i)=>{
         const b = document.createElement('button');
-        b.className = 'action-btn'; b.style.background = '#111'; b.style.color = '#fff'; b.style.border = '1px solid #333';
-        b.textContent = opt;
+        b.className = 'action-btn btn-outline';
+        b.innerText = a;
         b.onclick = () => {
-            const win = {easy:10, medium:25, hard:50}[currentDiff];
-            if(i === q.correct) { b.style.borderColor = '#4ade80'; coins += win; document.getElementById('winAmount').textContent = win; }
-            else { b.style.borderColor = '#f87171'; document.getElementById('winAmount').textContent = 0; }
+            const reward = {easy:10, medium:35, hard:100}[selD];
+            if(i === q.c){ b.style.borderColor = "#4ade80"; coins += reward; }
+            else { b.style.borderColor = "#f87171"; }
             localStorage.setItem('bc_coins', coins);
-            setTimeout(() => {
-                document.getElementById('quizArea').classList.add('hidden');
-                document.getElementById('resultArea').classList.remove('hidden');
-                updateUI();
-            }, 1000);
+            setTimeout(()=>location.reload(), 1200);
         };
         g.appendChild(b);
     });
-    document.getElementById('qContent').classList.remove('hidden');
+    document.getElementById('quizDisplay').classList.remove('hidden');
 }
 
-function renderShop() {
-    const items = [
-        {id:'hint', name:'🔍 50/50 Power', p:50},
-        {id:'chest', name:'🎁 Mystery Chest', p:100}
+function renderStore(){
+    const catalog = [
+        {id:'h', n:'🔍 Hint Pack (50/50)', p:40},
+        {id:'c', n:'🎁 Mystery Loot Box', p:80}
     ];
     let h = '';
-    items.forEach(i => {
+    catalog.forEach(i=>{
         h += `<div class="card" style="display:flex; justify-content:space-between; align-items:center">
-            <div><b>${i.name}</b><br><small style="color:#666">${i.p} coins</small></div>
-            <button class="action-btn btn-gold" style="width:80px; margin:0" onclick="buy('${i.id}', ${i.p})">BUY</button>
+            <div><p style="font-weight:bold">${i.n}</p><small style="color:#666">${i.p} Coins</small></div>
+            <button class="action-btn btn-main" style="width:auto; padding:8px 18px; margin:0" onclick="buy('${i.id}',${i.p})">Buy</button>
         </div>`;
     });
-    document.getElementById('shopList').innerHTML = h;
+    document.getElementById('shopContent').innerHTML = h;
+    document.getElementById('invDisp').innerText = `Hints: ${inv.h} | Chests: ${inv.c}`;
 }
 
-function buy(id, p) {
-    if(coins < p) { alert("Need more coins!"); return; }
-    coins -= p;
-    if(id==='hint') inv.hints++;
-    if(id==='chest') { const w=Math.floor(Math.random()*150); coins+=w; alert(`Won ${w} coins!`); }
-    localStorage.setItem('bc_coins', coins);
-    localStorage.setItem('bc_inv', JSON.stringify(inv));
-    updateUI();
+function buy(id,p){ 
+    if(coins>=p){
+        coins-=p; 
+        if(id==='h') inv.h++; 
+        else { const win=Math.floor(Math.random()*160); coins+=win; alert(`Chest contained ${win} coins!`); }
+        localStorage.setItem('bc_coins',coins); 
+        localStorage.setItem('bc_inv',JSON.stringify(inv));
+        location.reload();
+    } else alert("Insufficient Balance."); 
+}
+
+function contact(){ 
+    const s=document.getElementById('hSub').value; 
+    const b=document.getElementById('hBody').value;
+    window.location.href=`mailto:narteyvincentia8@gmail.com?subject=${encodeURIComponent(s)}&body=${encodeURIComponent(b)}`;
 }
 </script>
 </body>
     </html>
-    
+                                          
