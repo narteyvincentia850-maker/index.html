@@ -12,11 +12,10 @@
         .wallet{text-align:center;color:gold;font-size:18px;margin-bottom:16px}
         .card{background:#111;border:1px solid #333;border-radius:12px;padding:16px;margin-bottom:12px}
         .card h3{color:#a855f7;font-size:13px;margin-bottom:8px}
-        input,textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#000;color:#fff;font-size:14px;margin-bottom:12px}
+        input{width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#000;color:#fff;font-size:14px;margin-bottom:12px}
         button{width:100%;padding:12px;border-radius:8px;border:none;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:6px}
         .btn-main{background:linear-gradient(135deg,#7c3aed,#0891b2);color:#fff}
-        .btn-gold{background:#78350f;color:gold;border:1px solid gold}
-        .btn-gray{background:#1a1a2e;color:#888;border:1px solid #333}
+        .btn-main:disabled{opacity:0.3;cursor:not-allowed}
         .cats, .diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
         .cat, .diff{padding:10px 4px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:center;font-size:12px}
         .cat.on, .diff.on{border-color:#a855f7;background:#2d1b69;color:#a855f7}
@@ -29,13 +28,7 @@
         .nav-btn.on{border-color:#00f5ff;color:#00f5ff}
         .page{display:none}
         .page.active{display:block}
-
-        /* ADMIN OVERLAY */
-        #adminSetup {
-            position: fixed; top:0; left:0; width:100%; height:100%; 
-            background: rgba(0,0,0,0.95); z-index: 10000; 
-            display: flex; align-items: center; justify-content: center; padding: 20px;
-        }
+        #adminSetup {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
     </style>
 </head>
 <body>
@@ -43,10 +36,9 @@
 <div id="adminSetup" class="hidden">
     <div class="card" style="width: 100%; max-width: 400px;">
         <h3 style="color: #00f5ff;">🔑 ADMIN CONFIG</h3>
-        <p style="font-size: 12px; color: #888; margin-bottom: 10px;">Paste your Groq API Key. This is saved only in your browser.</p>
-        <input type="text" id="ownerKeyInput" placeholder="Enter gsk_... key here">
-        <button class="btn-main" onclick="saveOwnerKey()">SAVE & START</button>
-        <p style="font-size: 10px; color: #555; text-align: center;">Users won't see your key in the code.</p>
+        <p style="font-size: 12px; color: #888; margin-bottom: 10px;">Paste your Groq API Key (saved locally in your browser).</p>
+        <input type="text" id="ownerKeyInput" placeholder="gsk_xxxxxxxxxxxxxxx">
+        <button class="btn-main" id="saveKeyBtn" onclick="saveOwnerKey()">SAVE & START</button>
     </div>
 </div>
 
@@ -98,7 +90,7 @@
 <script>
     let ownerKey = localStorage.getItem('bc_owner_key') || "";
     let coins = parseInt(localStorage.getItem('bc_coins')) || 0;
-    let currentCat = null, currentDiff = null, score = 0;
+    let currentCat = null, currentDiff = null;
 
     window.onload = () => {
         if (!ownerKey) {
@@ -109,13 +101,22 @@
 
     function saveOwnerKey() {
         const val = document.getElementById('ownerKeyInput').value.trim();
-        if (val.startsWith('gsk_')) {
+        if (val.length > 20) {
             localStorage.setItem('bc_owner_key', val);
             ownerKey = val;
             document.getElementById('adminSetup').classList.add('hidden');
+            alert("Settings Saved!");
         } else {
-            alert("Invalid key. Must start with gsk_");
+            alert("Please paste a valid key.");
         }
+    }
+
+    function goPage(p, btn) {
+        document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
+        const target = document.getElementById(p + 'Page');
+        if(target) target.classList.add('active');
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
+        if(btn) btn.classList.add('on');
     }
 
     function pick(el, c) {
@@ -145,16 +146,13 @@
     async function loadQuestion() {
         document.getElementById('loading').style.display = 'block';
         document.getElementById('qwrap').classList.add('hidden');
-        
         const question = await fetchGroqTrivia();
-        
         document.getElementById('loading').style.display = 'none';
         if (!question) return;
 
         document.getElementById('qtxt').textContent = question.question;
         const optsDiv = document.getElementById('opts');
         optsDiv.innerHTML = '';
-        
         question.options.forEach((opt, i) => {
             const b = document.createElement('button');
             b.className = 'opt';
@@ -166,25 +164,22 @@
     }
 
     async function fetchGroqTrivia() {
-        const prompt = `Generate one ${currentDiff} trivia question about ${currentCat}. Return ONLY JSON: {"question": "...", "options": ["A", "B", "C", "D"], "correct": 0}`;
-        
         try {
             const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${ownerKey}`,
-                    'Content-Type': 'application/json'
-                },
+                headers: {'Authorization': `Bearer ${ownerKey}`, 'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     model: "llama-3.3-70b-versatile",
-                    messages: [{role: "user", content: prompt}],
+                    messages: [{role: "user", content: `Return ONLY JSON: {"question":"...","options":["A","B","C","D"],"correct":0} for a ${currentDiff} trivia question about ${currentCat}.`}],
                     response_format: { type: "json_object" }
                 })
             });
             const data = await resp.json();
             return JSON.parse(data.choices[0].message.content);
         } catch (e) {
-            alert("API Error. Key might be wrong or expired.");
+            alert("API Error. Resetting Key...");
+            localStorage.removeItem('bc_owner_key');
+            location.reload();
             return null;
         }
     }
@@ -192,28 +187,20 @@
     function handleAnswer(selected, correct, btn) {
         const options = document.querySelectorAll('.opt');
         options.forEach(opt => opt.style.pointerEvents = 'none');
-
         if (selected === correct) {
             btn.classList.add('correct');
-            score++;
             coins += 25;
         } else {
             btn.classList.add('wrong');
             options[correct].classList.add('correct');
         }
-        
         localStorage.setItem('bc_coins', coins);
         document.getElementById('coins').textContent = coins;
-        
         setTimeout(() => {
             document.getElementById('quiz').classList.add('hidden');
             document.getElementById('results').classList.remove('hidden');
             document.getElementById('rearned').textContent = (selected === correct) ? 25 : 0;
         }, 2000);
-    }
-
-    function goPage(p, btn) {
-        // Logic for shop can be added here
     }
 </script>
 </body>
