@@ -22,7 +22,7 @@
         .opt{width:100%;padding:12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:left;font-size:15px;margin-bottom:8px}
         .opt.correct{border-color:#4ade80;background:#052e16;color:#4ade80}
         .opt.wrong{border-color:#f87171;background:#2d0a0a;color:#f87171}
-        .hidden{display:none}
+        .hidden{display:none !important}
         .nav{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto}
         .nav-btn{padding:8px 14px;border-radius:20px;border:1px solid #333;background:#111;color:#888;font-size:12px}
         .nav-btn.on{border-color:#00f5ff;color:#00f5ff}
@@ -36,9 +36,9 @@
 <div id="adminSetup" class="hidden">
     <div class="card" style="width: 100%; max-width: 400px;">
         <h3 style="color: #00f5ff;">🔑 ADMIN CONFIG</h3>
-        <p style="font-size: 12px; color: #888; margin-bottom: 10px;">Paste your Groq API Key (saved locally in your browser).</p>
+        <p style="font-size: 12px; color: #888; margin-bottom: 10px;">Paste your Groq API Key below. This is saved only in your browser storage.</p>
         <input type="text" id="ownerKeyInput" placeholder="gsk_xxxxxxxxxxxxxxx">
-        <button class="btn-main" id="saveKeyBtn" onclick="saveOwnerKey()">SAVE & START</button>
+        <button class="btn-main" onclick="saveOwnerKey()">SAVE & START</button>
     </div>
 </div>
 
@@ -87,27 +87,38 @@
     </div>
 </div>
 
+<div id="shopPage" class="page">
+    <div class="card">
+        <h3>🛒 SHOP</h3>
+        <p style="color:#888; font-size:13px">Coming soon! Use your coins for power-ups.</p>
+    </div>
+</div>
+
 <script>
     let ownerKey = localStorage.getItem('bc_owner_key') || "";
     let coins = parseInt(localStorage.getItem('bc_coins')) || 0;
     let currentCat = null, currentDiff = null;
 
     window.onload = () => {
-        if (!ownerKey) {
+        // If key is missing or short, show setup. Otherwise hide it.
+        if (!ownerKey || ownerKey.length < 15) {
             document.getElementById('adminSetup').classList.remove('hidden');
+        } else {
+            document.getElementById('adminSetup').classList.add('hidden');
         }
         document.getElementById('coins').textContent = coins;
     };
 
     function saveOwnerKey() {
         const val = document.getElementById('ownerKeyInput').value.trim();
-        if (val.length > 20) {
+        if (val.length > 15) {
             localStorage.setItem('bc_owner_key', val);
             ownerKey = val;
+            // Immediate hide without alert to prevent mobile "freezing"
+            document.getElementById('adminSetup').style.display = 'none';
             document.getElementById('adminSetup').classList.add('hidden');
-            alert("Settings Saved!");
         } else {
-            alert("Please paste a valid key.");
+            alert("Please paste a valid Groq API key.");
         }
     }
 
@@ -148,7 +159,12 @@
         document.getElementById('qwrap').classList.add('hidden');
         const question = await fetchGroqTrivia();
         document.getElementById('loading').style.display = 'none';
-        if (!question) return;
+        
+        if (!question) {
+            alert("Connection Error. Try again.");
+            location.reload();
+            return;
+        }
 
         document.getElementById('qtxt').textContent = question.question;
         const optsDiv = document.getElementById('opts');
@@ -167,19 +183,20 @@
         try {
             const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
-                headers: {'Authorization': `Bearer ${ownerKey}`, 'Content-Type': 'application/json'},
+                headers: {
+                    'Authorization': `Bearer ${ownerKey}`,
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({
                     model: "llama-3.3-70b-versatile",
-                    messages: [{role: "user", content: `Return ONLY JSON: {"question":"...","options":["A","B","C","D"],"correct":0} for a ${currentDiff} trivia question about ${currentCat}.`}],
+                    messages: [{role: "user", content: `Return ONLY JSON format: {"question":"...","options":["A","B","C","D"],"correct":0} for a ${currentDiff} trivia question about ${currentCat}.`}],
                     response_format: { type: "json_object" }
                 })
             });
             const data = await resp.json();
             return JSON.parse(data.choices[0].message.content);
         } catch (e) {
-            alert("API Error. Resetting Key...");
-            localStorage.removeItem('bc_owner_key');
-            location.reload();
+            console.error(e);
             return null;
         }
     }
@@ -187,6 +204,7 @@
     function handleAnswer(selected, correct, btn) {
         const options = document.querySelectorAll('.opt');
         options.forEach(opt => opt.style.pointerEvents = 'none');
+        
         if (selected === correct) {
             btn.classList.add('correct');
             coins += 25;
@@ -194,8 +212,10 @@
             btn.classList.add('wrong');
             options[correct].classList.add('correct');
         }
+        
         localStorage.setItem('bc_coins', coins);
         document.getElementById('coins').textContent = coins;
+        
         setTimeout(() => {
             document.getElementById('quiz').classList.add('hidden');
             document.getElementById('results').classList.remove('hidden');
