@@ -3,50 +3,75 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BrainCoins - Play Trivia & Earn Coins</title>
+<title>BrainCoins - Centia</title>
 <style>
+/* --- BASE STYLES --- */
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a1a;color:#fff;font-family:sans-serif;padding:16px;min-height:100vh}
-h1{text-align:center;color:#00f5ff;font-size:24px;margin-bottom:4px}
+body{background:#0a0a1a;color:#fff;font-family:sans-serif;padding:16px;min-height:100vh;overflow-x:hidden}
+
+/* --- FLOATING BACKGROUND OBJECTS --- */
+#canvas-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* --- UI ELEMENTS --- */
+h1{text-align:center;color:#00f5ff;font-size:26px;margin-bottom:4px;text-shadow: 0 0 15px rgba(0,245,255,0.5)}
+.brain-icon { font-size: 30px; display: block; text-align: center; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
 .sub{text-align:center;color:#888;font-size:13px;margin-bottom:16px}
-.wallet{text-align:center;color:gold;font-size:18px;margin-bottom:16px;font-weight:bold}
-.card{background:#111;border:1px solid #333;border-radius:12px;padding:16px;margin-bottom:12px}
-.card h3{color:#a855f7;font-size:13px;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
-input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #444;background:#000;color:#fff;font-size:14px;margin-bottom:8px}
-button{width:100%;padding:12px;border-radius:8px;border:none;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:6px;transition:0.2s}
-.btn-main{background:linear-gradient(135deg,#7c3aed,#0891b2);color:#fff}
+.wallet{text-align:center;color:gold;font-size:18px;margin-bottom:16px;font-weight:bold;background: rgba(255,215,0,0.1); width: fit-content; margin: 0 auto 16px; padding: 8px 20px; border-radius: 50px; border: 1px solid rgba(255,215,0,0.3)}
+
+.card{background:rgba(17,17,26,0.8); border:1px solid #333; border-radius:16px; padding:16px; margin-bottom:12px; backdrop-filter: blur(5px)}
+.card h3{color:#a855f7;font-size:12px;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
+
+input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #444;background:#000;color:#fff;font-size:14px;margin-bottom:10px}
+button{width:100%;padding:12px;border-radius:10px;border:none;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:6px;transition:0.3s}
+
+.btn-main{background:linear-gradient(135deg,#7c3aed,#0891b2);color:#fff; box-shadow: 0 4px 15px rgba(124,58,237,0.3)}
+.btn-main:active{transform: scale(0.96)}
 .btn-gold{background:#78350f;color:gold;border:1px solid gold}
 .btn-disabled{background:#222 !important;color:#555 !important;border:1px solid #333 !important;cursor:not-allowed}
+
 .cats, .diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.cat, .diff{padding:10px 4px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;cursor:pointer;text-align:center;font-size:11px}
-.cat.on, .diff.on{border-color:#00f5ff;background:#001a2e;color:#00f5ff}
-.opt{width:100%;padding:12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;text-align:left;font-size:15px;margin-bottom:8px}
+.cat, .diff{padding:12px 4px;border-radius:10px;border:1px solid #333;background:rgba(20,20,30,0.6);color:#fff;cursor:pointer;text-align:center;font-size:11px;transition: 0.2s}
+.cat.on, .diff.on{border-color:#00f5ff;background:rgba(0,245,255,0.1);color:#00f5ff;box-shadow: 0 0 10px rgba(0,245,255,0.2)}
+
+.opt{width:100%;padding:14px;border-radius:12px;border:1px solid #333;background:rgba(255,255,255,0.05);color:#fff;text-align:left;font-size:15px;margin-bottom:10px}
 .opt.correct{border-color:#4ade80;background:#052e16;color:#4ade80}
 .opt.wrong{border-color:#f87171;background:#2d0a0a;color:#f87171}
+
 .hidden{display:none !important}
-.nav{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:8px}
-.nav-btn{padding:8px 14px;border-radius:20px;border:1px solid #333;background:#111;color:#888;font-size:12px;white-space:nowrap}
-.nav-btn.on{border-color:#00f5ff;color:#00f5ff;background:#001a2e}
-.page{display:none}
-.page.active{display:block}
-.shop-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;border:1px solid #222;background:#0a0a0a;margin-bottom:10px}
-.item-info b{display:block;font-size:14px;color:#eee}
-.item-info small{color:#666;font-size:11px}
-#adminSetup{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
+.nav{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:10px; scrollbar-width: none}
+.nav::-webkit-scrollbar { display: none; }
+.nav-btn{padding:10px 18px;border-radius:30px;border:1px solid #333;background:#111;color:#888;font-size:12px;white-space:nowrap;transition: 0.3s}
+.nav-btn.on{border-color:#00f5ff;color:#00f5ff;background:rgba(0,245,255,0.1)}
+
+.shop-item{display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:12px;border:1px solid #222;background:rgba(0,0,0,0.3);margin-bottom:10px}
+#adminSetup{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a1a;z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
 </style>
 </head>
 <body>
 
+<canvas id="canvas-bg"></canvas>
+
 <div id="adminSetup" class="hidden">
     <div class="card" style="width: 100%; max-width: 400px;">
-        <h3>🔑 OWNER CONFIG</h3>
-        <p style="font-size:11px; color:#666; margin-bottom:10px">Paste your Groq API Key to start the engine.</p>
+        <h3>🔑 SYSTEM ACTIVATION</h3>
+        <p style="font-size:11px; color:#666; margin-bottom:10px">Enter your Groq API Key to power the game engine.</p>
         <input type="text" id="ownerKeyInput" placeholder="gsk_xxxx...">
-        <button class="btn-main" onclick="saveKey()">ACTIVATE SYSTEM</button>
+        <button class="btn-main" onclick="saveKey()">ACTIVATE BRAINCOINS</button>
     </div>
 </div>
 
-<h1>🧠 BRAINCOINS</h1>
+<span class="brain-icon">🧠</span>
+<h1>BRAINCOINS</h1>
 <div class="sub">Play · Earn · Unlock Rewards</div>
 <div class="wallet">🪙 <span id="coinText">0</span> coins</div>
 
@@ -60,34 +85,38 @@ button{width:100%;padding:12px;border-radius:8px;border:none;font-size:14px;font
 <div id="homePage" class="page active">
     <div id="home">
         <div class="card">
-            <h3>SELECT TOPIC</h3>
+            <h3>TOPICS</h3>
             <div class="cats">
                 <div class="cat" onclick="pickC(this,'Science')">🔬 Science</div>
                 <div class="cat" onclick="pickC(this,'History')">📜 History</div>
-                <div class="cat" onclick="pickC(this,'Africa & Ghana')">🌍 Africa</div>
+                <div class="cat" onclick="pickC(this,'Geography')">🌍 Geography</div>
+                <div class="cat" onclick="pickC(this,'Pop Culture')">🎬 Pop</div>
+                <div class="cat" onclick="pickC(this,'Africa')">🌍 Africa</div>
                 <div class="cat" onclick="pickC(this,'Tech')">💻 Tech</div>
             </div>
-            <h3>DIFFICULTY</h3>
+            <h3>LEVEL</h3>
             <div class="diffs">
                 <div class="diff" onclick="pickD(this,'easy')">EASY</div>
                 <div class="diff" onclick="pickD(this,'medium')">MED</div>
                 <div class="diff" onclick="pickD(this,'hard')">HARD</div>
             </div>
-            <button class="btn-main" id="startBtn" onclick="startGame()" disabled>CHOOSE SETTINGS</button>
+            <button class="btn-main" id="startBtn" onclick="startGame()" disabled>READY TO START</button>
         </div>
     </div>
 
     <div id="quiz" class="hidden">
-        <div id="loading" style="text-align:center;padding:40px;color:#888">AI is crafting a question...</div>
+        <div id="loading" style="text-align:center;padding:40px;color:#888">
+            <div class="brain-icon">🧠</div><br>AI is thinking...
+        </div>
         <div id="qwrap" class="hidden">
-            <div class="card"><p id="qtxt" style="font-size:18px;"></p></div>
+            <div class="card"><p id="qtxt" style="font-size:18px; line-height:1.4"></p></div>
             <div id="opts"></div>
         </div>
     </div>
 
     <div id="results" class="hidden">
         <div class="card" style="text-align:center">
-            <h2 id="resTitle">ROUND OVER</h2>
+            <h2 id="resTitle">ROUND COMPLETE</h2>
             <div style="font-size:40px; margin: 15px 0; color:gold">🪙 <span id="rearned">0</span></div>
             <button class="btn-main" onclick="location.reload()">PLAY AGAIN</button>
         </div>
@@ -96,8 +125,8 @@ button{width:100%;padding:12px;border-radius:8px;border:none;font-size:14px;font
 
 <div id="shopPage" class="page">
     <div class="card">
-        <h3>🎒 YOUR INVENTORY</h3>
-        <div style="font-size:13px; color:#888" id="inventoryText">Hints: 0 | Mystery Chests: 0</div>
+        <h3>🎒 INVENTORY</h3>
+        <div style="font-size:13px; color:#888" id="inventoryText">Hints: 0 | Chests: 0</div>
     </div>
     <div class="card">
         <h3>🛒 COIN SHOP</h3>
@@ -107,28 +136,66 @@ button{width:100%;padding:12px;border-radius:8px;border:none;font-size:14px;font
 
 <div id="aboutPage" class="page">
     <div class="card">
-        <h3>ABOUT BRAINCOINS</h3>
-        <p style="font-size:13px; color:#aaa; line-height:1.6">Created by Vincentia Nartey. A fun way to test your knowledge and earn digital coins. Built for the curious minds of Ghana and beyond.</p>
+        <h3>DEVELOPER</h3>
+        <p style="font-size:14px; color:#eee; margin-bottom:10px">Created by <b>Centia</b>.</p>
+        <p style="font-size:13px; color:#aaa; line-height:1.6">BrainCoins is a global trivia platform where knowledge earns rewards. Built for learners who want more than just a score.</p>
     </div>
 </div>
 
 <div id="contactPage" class="page">
     <div class="card">
         <h3>📧 SUPPORT</h3>
+        <p style="color:#00f5ff; margin-bottom:15px; font-size:14px">narteyvincentia96@gmail.com</p>
         <input type="text" placeholder="Subject">
-        <textarea rows="4" placeholder="How can we help?"></textarea>
-        <button class="btn-main" onclick="alert('Message Sent!')">SEND MESSAGE</button>
+        <textarea rows="4" placeholder="Describe your issue..."></textarea>
+        <button class="btn-main" onclick="alert('Sent to Support!')">SEND MESSAGE</button>
     </div>
 </div>
 
 <script>
-// --- GAME DATA ---
+// --- BACKGROUND ANIMATION ---
+const canvas = document.getElementById('canvas-bg');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function initParticles() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    particles = [];
+    for(let i=0; i<30; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 2 + 1,
+            speedX: Math.random() * 0.5 - 0.25,
+            speedY: Math.random() * 0.5 - 0.25,
+            opacity: Math.random()
+        });
+    }
+}
+
+function animate() {
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    particles.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+        if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(0, 245, 255, ${p.opacity})`;
+        ctx.fill();
+    });
+    requestAnimationFrame(animate);
+}
+initParticles(); animate();
+
+// --- GAME LOGIC ---
 let coins = parseInt(localStorage.getItem('bc_coins')) || 0;
 let ownerKey = localStorage.getItem('bc_owner_key') || "";
 let inventory = JSON.parse(localStorage.getItem('bc_inv')) || { hints: 0, chests: 0 };
 let unlocks = JSON.parse(localStorage.getItem('bc_unlocks')) || [];
-
-let currentCat = null, currentDiff = null;
+let currentCat, currentDiff;
 
 const SHOP_ITEMS = [
     { id: 'hint', name: '🔍 50/50 Power-up', desc: 'Remove 2 wrong answers', price: 50, multi: true },
@@ -136,9 +203,8 @@ const SHOP_ITEMS = [
     { id: 'gold_theme', name: '✨ Gold Theme', desc: 'Prestige gold interface', price: 200, multi: false }
 ];
 
-// --- INITIALIZE ---
 window.onload = () => {
-    if (!ownerKey) document.getElementById('adminSetup').classList.remove('hidden');
+    if (!ownerKey || ownerKey.length < 20) document.getElementById('adminSetup').classList.remove('hidden');
     updateUI();
 };
 
@@ -157,7 +223,6 @@ function saveKey() {
     }
 }
 
-// --- NAVIGATION ---
 function goPage(p, btn) {
     window.activePage = p;
     document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
@@ -167,22 +232,15 @@ function goPage(p, btn) {
     updateUI();
 }
 
-// --- SHOP LOGIC ---
 function renderShop() {
     let html = '';
     SHOP_ITEMS.forEach(item => {
         const isBought = !item.multi && unlocks.includes(item.id);
         const canAfford = coins >= item.price;
-        
-        html += `
-        <div class="shop-item">
-            <div class="item-info">
-                <b>${item.name}</b>
-                <small>${item.desc}</small>
-            </div>
+        html += `<div class="shop-item">
+            <div class="item-info"><b>${item.name}</b><small>${item.desc}</small></div>
             <button class="${isBought ? 'btn-disabled' : 'btn-gold'} ${(!canAfford && !isBought) ? 'btn-disabled' : ''}" 
-                    style="width:auto; padding:8px 15px" 
-                    onclick="buyItem('${item.id}', ${item.price}, ${item.multi})">
+                    style="width:auto; padding:8px 15px" onclick="buyItem('${item.id}', ${item.price}, ${item.multi})">
                 ${isBought ? 'OWNED' : item.price + ' 🪙'}
             </button>
         </div>`;
@@ -192,28 +250,20 @@ function renderShop() {
 
 function buyItem(id, price, isMulti) {
     if (!isMulti && unlocks.includes(id)) return;
-    if (coins < price) {
-        alert("Not enough coins! Play more trivia.");
-        return;
-    }
-
+    if (coins < price) { alert("Insufficient coins!"); return; }
     coins -= price;
-    
     if (id === 'hint') inventory.hints++;
     if (id === 'chest') {
         const win = Math.floor(Math.random() * 195) + 5;
-        coins += win;
-        alert(`Chest opened! You won ${win} coins!`);
+        coins += win; alert(`You opened a chest and found ${win} coins!`);
     }
     if (!isMulti) unlocks.push(id);
-
     localStorage.setItem('bc_coins', coins);
     localStorage.setItem('bc_inv', JSON.stringify(inventory));
     localStorage.setItem('bc_unlocks', JSON.stringify(unlocks));
     updateUI();
 }
 
-// --- TRIVIA LOGIC ---
 function pickC(el, c) {
     document.querySelectorAll('.cat').forEach(b => b.classList.remove('on'));
     el.classList.add('on'); currentCat = c; checkReady();
@@ -225,35 +275,32 @@ function pickD(el, d) {
 function checkReady() {
     if (currentCat && currentDiff) {
         const b = document.getElementById('startBtn');
-        b.disabled = false; b.textContent = "START GAME";
+        b.disabled = false; b.textContent = "LET'S PLAY";
     }
 }
 
 async function startGame() {
     document.getElementById('home').classList.add('hidden');
     document.getElementById('quiz').classList.remove('hidden');
-    
     try {
         const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {'Authorization': `Bearer ${ownerKey}`, 'Content-Type': 'application/json'},
             body: JSON.stringify({
                 model: "llama-3.3-70b-versatile",
-                messages: [{role: "user", content: `Return JSON: {"question":"...","options":["A","B","C","D"],"correct":0} for a ${currentDiff} trivia about ${currentCat}.`}],
+                messages: [{role: "user", content: `JSON ONLY: {"question":"...","options":["A","B","C","D"],"correct":0} for ${currentDiff} trivia about ${currentCat}.`}],
                 response_format: { type: "json_object" }
             })
         });
         const data = await resp.json();
-        const q = JSON.parse(data.choices[0].message.content);
-        showQ(q);
-    } catch (e) { alert("Error connecting to AI."); location.reload(); }
+        showQ(JSON.parse(data.choices[0].message.content));
+    } catch (e) { alert("API Connection Failed."); location.reload(); }
 }
 
 function showQ(q) {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('qtxt').textContent = q.question;
     const o = document.getElementById('opts'); o.innerHTML = '';
-    
     q.options.forEach((opt, i) => {
         const b = document.createElement('button');
         b.className = 'opt';
@@ -261,12 +308,10 @@ function showQ(q) {
         b.onclick = () => {
             const reward = {easy:10, medium:25, hard:50}[currentDiff];
             if(i === q.correct) {
-                b.classList.add('correct');
-                coins += reward;
+                b.classList.add('correct'); coins += reward;
                 document.getElementById('rearned').textContent = reward;
             } else {
-                b.classList.add('wrong');
-                document.getElementById('rearned').textContent = 0;
+                b.classList.add('wrong'); document.getElementById('rearned').textContent = 0;
             }
             localStorage.setItem('bc_coins', coins);
             setTimeout(() => {
