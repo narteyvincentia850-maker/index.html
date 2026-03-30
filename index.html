@@ -145,7 +145,7 @@ button{width:100%;padding:12px;border-radius:10px;border:none;font-size:14px;fon
 <div id="contactPage" class="page">
     <div class="card">
         <h3>📧 SUPPORT</h3>
-        <p style="color:#00f5ff; margin-bottom:15px; font-size:14px">narteyvincentia96@gmail.com</p>
+        <p style="color:#00f5ff; margin-bottom:15px; font-size:14px">narteyvincentia8@gmail.com</p>
         <input type="text" placeholder="Subject">
         <textarea rows="4" placeholder="Describe your issue..."></textarea>
         <button class="btn-main" onclick="alert('Sent to Support!')">SEND MESSAGE</button>
@@ -153,7 +153,6 @@ button{width:100%;padding:12px;border-radius:10px;border:none;font-size:14px;fon
 </div>
 
 <script>
-// --- BACKGROUND ANIMATION ---
 const canvas = document.getElementById('canvas-bg');
 const ctx = canvas.getContext('2d');
 let particles = [];
@@ -177,8 +176,7 @@ function initParticles() {
 function animate() {
     ctx.clearRect(0,0,canvas.width, canvas.height);
     particles.forEach(p => {
-        p.x += p.speedX;
-        p.y += p.speedY;
+        p.x += p.speedX; p.y += p.speedY;
         if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
         if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
         ctx.beginPath();
@@ -190,7 +188,6 @@ function animate() {
 }
 initParticles(); animate();
 
-// --- GAME LOGIC ---
 let coins = parseInt(localStorage.getItem('bc_coins')) || 0;
 let ownerKey = localStorage.getItem('bc_owner_key') || "";
 let inventory = JSON.parse(localStorage.getItem('bc_inv')) || { hints: 0, chests: 0 };
